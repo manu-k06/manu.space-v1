@@ -1,0 +1,158 @@
+/* ============================================
+   LAYOUT SYSTEM (Nav, Footer, Generic Sections)
+   ============================================ */
+
+/* --- Navigation --- */
+.site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: var(--space-md) 0;
+  z-index: 100;
+  mix-blend-mode: difference; /* Ensures text is visible across light/dark parts of the image */
+}
+
+.site-nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.nav-links a {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #aaa;
+  transition: color var(--transition-fast);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #fff;
+}
+
+/* --- Footer --- */
+.site-footer {
+  padding: var(--space-lg) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: var(--space-2xl);
+}
+
+.site-footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* --- Timeline (Journey) --- */
+.timeline {
+  position: relative;
+  max-width: 800px;
+  margin: var(--space-xl) auto;
+  padding-left: 2rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: var(--space-xl);
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -2.35rem; /* center the dot on the 1px border */
+  top: 0.5rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--bg-deep);
+  border: 1px solid var(--text-secondary);
+  transition: background var(--transition-base);
+}
+
+.timeline-item:hover::before {
+  background: var(--text-primary);
+}
+
+.timeline-date {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  margin-bottom: var(--space-xs);
+}
+
+.timeline-title {
+  margin-bottom: var(--space-xs);
+  color: var(--text-primary);
+}
+
+.timeline-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* --- Projects Grid --- */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background var(--transition-base), border-color var(--transition-base);
+}
+
+.project-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.project-meta {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.project-title {
+  font-size: 1.4rem;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; /* simple mobile hide for MVP/minimalism, or consider a basic flex menu */
+  }
+  .timeline {
+    padding-left: 1rem;
+  }
+  .timeline-item::before {
+    left: -1.35rem;
+  }
+}

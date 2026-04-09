@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Manu</title>
+  <meta name="description" content="Get in touch with Manu.">
+  
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+
+  <script defer src="js/main.js"></script>
+  
+  <style>
+    .contact-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      margin-top: var(--space-xl);
+    }
+    
+    .contact-link {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      color: var(--text-secondary);
+      display: inline-block;
+      position: relative;
+      width: fit-content;
+      transition: color var(--transition-base);
+    }
+    
+    .contact-link:hover {
+      color: var(--text-primary);
+    }
+    
+    .contact-link::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--text-primary);
+      transform: scaleX(0);
+      transform-origin: bottom right;
+      transition: transform var(--transition-base);
+    }
+    
+    .contact-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+  </style>
+</head>
+<body>
+  <!-- Page Transition Overlay -->
+  <div class="page-transition-overlay"></div>
+
+  <!-- Navigation -->
+  <nav class="site-nav fade-in">
+    <div class="container">
+      <a href="index.html" class="brand">Manu.</a>
+      <div class="nav-links">
+        <a href="about.html">About</a>
+        <a href="journey.html">Journey</a>
+        <a href="projects.html">Projects</a>
+        <a href="contact.html" class="active">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="section section--full">
+      <div class="container">
+        <div class="fade-in">
+          <span class="label">Contact</span>
+          <h2 style="margin: var(--space-sm) 0 0;">Reach out.</h2>
+          
+          <div class="contact-wrapper">
+            <a href="mailto:manu.k.rajan06@gmail.com" class="contact-link fade-in">manu.k.rajan06@gmail.com</a>
+            <a href="https://github.com/manu-k06" target="_blank" rel="noopener noreferrer" class="contact-link fade-in">GitHub</a>
+            <a href="https://linkedin.com/in/manu-k-rajan" target="_blank" rel="noopener noreferrer" class="contact-link fade-in">LinkedIn</a>
+            <a href="https://instagram.com/manukraaj_" target="_blank" rel="noopener noreferrer" class="contact-link fade-in">Instagram</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
