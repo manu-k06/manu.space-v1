@@ -5,7 +5,7 @@ A cinematic, highly customized portfolio built entirely with pure HTML, CSS, and
 Designed for Manu, a Computer Science Engineering student obsessed with elegant coding, deep space aesthetics, and intentional restraint over complexity. The site features organic animations, a "dark room exposure" loader, and fully fluid typography that operates without any external frontend frameworks.
 
 ## Live Project
-🌐 `manu.space` (coming soon)
+🌐 [manu-space-v1.vercel.app](https://manu-space-v1.vercel.app)
 
 ## Technologies Used
 - HTML5 Semantic Structure
