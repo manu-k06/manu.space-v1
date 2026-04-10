@@ -114,7 +114,7 @@
 /* --- Projects Grid --- */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: var(--space-md);
   margin-top: var(--space-xl);
 }
@@ -146,8 +146,20 @@
 }
 
 @media (max-width: 768px) {
+  .site-nav {
+    padding: var(--space-sm) 0;
+  }
+  .site-nav .container {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
   .nav-links {
-    display: none; /* simple mobile hide for MVP/minimalism, or consider a basic flex menu */
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .brand {
+    font-size: 1.2rem;
   }
   .timeline {
     padding-left: 1rem;
