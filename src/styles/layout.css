@@ -39,6 +39,7 @@
   letter-spacing: 0.1em;
   color: #aaa;
   transition: color var(--transition-fast);
+  position: relative;
 }
 
 .nav-links a:hover,
@@ -46,11 +47,21 @@
   color: #fff;
 }
 
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--accent);
+}
+
 /* --- Footer --- */
 .site-footer {
   padding: var(--space-lg) 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
-  margin-top: var(--space-2xl);
+  margin-top: auto;
 }
 
 .site-footer .container {
@@ -134,6 +145,12 @@
   border-color: rgba(255, 255, 255, 0.1);
 }
 
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .project-meta {
   font-size: 0.7rem;
   color: var(--text-dim);
@@ -141,8 +158,87 @@
   text-transform: uppercase;
 }
 
+.project-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color var(--transition-fast);
+}
+
+.project-card:hover .project-badge {
+  color: var(--accent);
+}
+
+.project-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: var(--accent);
+}
+
+.project-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
 .project-title {
   font-size: 1.4rem;
+}
+
+.project-arrow {
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.project-card:hover .project-arrow {
+  color: var(--text-primary);
+  transform: translate(2px, -2px);
+}
+
+/* --- Contact Section --- */
+.contact-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.contact-link {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  display: inline-block;
+  position: relative;
+  width: fit-content;
+  transition: color var(--transition-base);
+}
+
+.contact-link:hover {
+  color: var(--text-primary);
+}
+
+.contact-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--text-primary);
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform var(--transition-base);
+}
+
+.contact-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
 }
 
 @media (max-width: 768px) {

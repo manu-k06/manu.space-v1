@@ -21,7 +21,6 @@
   --accent:        #c4b5a4;
   --accent-dim:    rgba(196, 181, 164, 0.15);
 
-
   /* Typography */
   --font-serif: 'Cormorant Garamond', 'Georgia', serif;
   --font-sans:  'Inter', -apple-system, 'Segoe UI', sans-serif;
@@ -66,12 +65,13 @@ body {
   font-size: 1rem;
   line-height: 1.7;
   overflow-x: hidden;
-  opacity: 0;
-  transition: opacity 0.6s ease;
+  min-height: 100vh;
 }
 
-body.loaded {
-  opacity: 1;
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 img {
@@ -133,7 +133,7 @@ p {
   color: var(--text-dim);
 }
 
-/* --- Layout --- */
+/* --- Layout Containers --- */
 .container {
   width: 100%;
   max-width: 1200px;
@@ -143,10 +143,11 @@ p {
 
 .section {
   padding: var(--space-xl) 0;
+  flex: 1;
 }
 
 .section--full {
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
   display: flex;
   align-items: center;
 }
@@ -173,42 +174,21 @@ p {
   50%      { border-color: transparent; }
 }
 
+/* Fade in class with auto-play or observer */
 .fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s var(--ease-out-expo),
-              transform 0.8s var(--ease-out-expo);
+  animation: fadeUp 0.8s var(--ease-out-expo) forwards;
 }
 
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
+/* Page entrance transition */
+.page-enter {
+  animation: fadeIn 0.5s ease forwards;
 }
 
-/* Stagger children */
-.fade-in.visible:nth-child(2) { transition-delay: 0.1s; }
-.fade-in.visible:nth-child(3) { transition-delay: 0.2s; }
-.fade-in.visible:nth-child(4) { transition-delay: 0.3s; }
-.fade-in.visible:nth-child(5) { transition-delay: 0.4s; }
-
-/* --- Page Transition Overlay --- */
-.page-transition-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--bg-deep);
-  z-index: 10000;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.page-transition-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
+/* Staggered animation utility classes */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
 
 /* --- Scrollbar --- */
 ::-webkit-scrollbar {

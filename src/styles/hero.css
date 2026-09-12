@@ -5,7 +5,7 @@
 .hero-section {
   position: relative;
   width: 100%;
-  height: 100vh; /* fallback */
+  height: 100vh;
   height: 100dvh;
   overflow: hidden;
   display: flex;
@@ -25,12 +25,13 @@
 
 .hero-parallax-wrapper {
   position: absolute;
-  top: -5%;
-  left: -5%;
-  width: 110%;
-  height: 110%;
-  /* Will be transformed by JS */
+  top: -6%;
+  left: -6%;
+  width: 112%;
+  height: 112%;
   will-change: transform;
+  transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.4, 1);
+  pointer-events: none;
 }
 
 /* The portrait image */
@@ -38,7 +39,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Shift image so the centered subject moves left, creating negative space on the right */
   object-position: 75% center; 
   filter: grayscale(100%) contrast(1.2) brightness(1.5) blur(4px);
   opacity: 0.2;
@@ -66,12 +66,12 @@
 /* Right-sided content positioning */
 .hero-content {
   position: relative;
-  z-index: 20; /* Above image and vignette, below grain (grain is 9999) */
+  z-index: 20;
   width: 100%;
   display: flex;
-  justify-content: flex-end; /* Push to right */
-  padding-right: 15%; /* Keep away from absolute edge */
-  pointer-events: none; /* Let mouse move freely over text for parallax */
+  justify-content: flex-end;
+  padding-right: 15%;
+  pointer-events: none;
 }
 
 /* The name */
@@ -94,38 +94,33 @@
   color: var(--text-secondary);
   position: relative;
   display: inline-block;
-  padding-right: 5px; /* space for cursor */
+  min-height: 1.6em;
+  padding-right: 6px;
 }
 
-/* Blinking text cursor */
-.hero-typewriter.typing-active::after {
+/* Always-blinking text cursor that fades away when typing completes */
+.hero-typewriter::after {
   content: '';
   position: absolute;
   right: 0;
-  top: 10%;
-  height: 80%;
-  border-right: 1px solid var(--text-secondary);
-  animation: blinkCursor 1s step-end infinite;
+  top: 15%;
+  height: 70%;
+  border-right: 1.5px solid var(--text-secondary);
+  animation: blinkCursor 0.8s step-end infinite;
 }
 
 .hero-typewriter.typing-done::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 10%;
-  height: 80%;
-  border-right: 1px solid var(--text-secondary);
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 1.2s ease;
 }
 
-/* Responsive adjust */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .hero-content {
     justify-content: center;
     padding-right: 0;
     text-align: center;
-    margin-top: 15vh; /* Push down less on mobile to prevent bottom clipping */
+    margin-top: 15vh;
   }
   
   .hero-name {
@@ -140,4 +135,3 @@
     background: linear-gradient(to bottom, transparent 30%, var(--bg-deep) 85%);
   }
 }
-
