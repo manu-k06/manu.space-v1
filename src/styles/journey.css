@@ -26,6 +26,77 @@
     linear-gradient(180deg, rgba(14, 14, 14, 0.98) 0%, rgba(10, 10, 10, 1) 100%);
 }
 
+/* Deep Space Galaxy Cluster Layers */
+.galaxy-cluster-wrap {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+/* Primary Cluster in the upper-right flank (matching reference image) */
+.galaxy-cluster-wrap--primary {
+  top: 1%;
+  right: -8%;
+  width: 950px;
+  max-width: 80vw;
+  opacity: 0.58;
+  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 65% 40%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 0.4) 55%, transparent 80%);
+  mask-image: radial-gradient(ellipse 65% 55% at 65% 40%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 0.4) 55%, transparent 80%);
+  animation: driftPrimaryGalaxy 35s ease-in-out infinite alternate;
+}
+
+/* Secondary subtle cluster deeper in the mountain pass */
+.galaxy-cluster-wrap--secondary {
+  top: 52%;
+  left: -12%;
+  width: 750px;
+  max-width: 65vw;
+  opacity: 0.35;
+  transform: rotate(170deg) scale(0.85);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 0.3) 50%, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 0.3) 50%, transparent 75%);
+  animation: driftSecondaryGalaxy 42s ease-in-out infinite alternate;
+}
+
+.galaxy-cluster-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: contrast(1.18) brightness(0.95) saturate(1.1);
+}
+
+@keyframes driftPrimaryGalaxy {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 0.52;
+  }
+  50% {
+    transform: translate(-25px, 20px) scale(1.04) rotate(0.8deg);
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate(15px, -15px) scale(0.98) rotate(-0.5deg);
+    opacity: 0.55;
+  }
+}
+
+@keyframes driftSecondaryGalaxy {
+  0% {
+    transform: translate(0, 0) rotate(170deg) scale(0.85);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(20px, -25px) rotate(172deg) scale(0.9);
+    opacity: 0.42;
+  }
+  100% {
+    transform: translate(-15px, 15px) rotate(168deg) scale(0.83);
+    opacity: 0.32;
+  }
+}
+
 /* Living Breathing Nebula Auroras */
 .nebula-cloud {
   position: absolute;
