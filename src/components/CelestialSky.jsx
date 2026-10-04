@@ -237,21 +237,6 @@ export function CelestialSky() {
     window.addEventListener('resize', handleResize);
 
     // ==========================================
-    // MULTI-PLANE SCROLL PARALLAX SYSTEM
-    // ==========================================
-    let currentScrollY = 0;
-    let targetScrollY = 0;
-
-    const handleScroll = () => {
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      targetScrollY = Math.max(0, -rect.top);
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // ==========================================
     // LIVE ANIMATION RENDER LOOP (60 FPS)
     // ==========================================
     let time = 0;
@@ -286,18 +271,9 @@ export function CelestialSky() {
       time += 1;
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth exponential lerp damping for cinematic cosmic parallax inertia
-      currentScrollY += (targetScrollY - currentScrollY) * 0.08;
-
-      // 4-layer depth field parallax offsets relative to roadmap scroll
       const c1 = g1.getCenter(width, height);
-      c1.y += currentScrollY * 0.22;
-
       const c2 = g2.getCenter(width, height);
-      c2.y += currentScrollY * 0.16;
-
       const c3 = g3.getCenter(width, height);
-      c3.y += currentScrollY * 0.10;
 
       // ------------------------------------------
       // 1. Draw Galaxy 1 Spiral Galactic Core Glow
@@ -388,9 +364,8 @@ export function CelestialSky() {
       ctx.fill();
 
       // ------------------------------------------
-      // 4. Render Background Field Stars (with Infinite Parallax Wrap)
+      // 4. Render Background Field Stars
       // ------------------------------------------
-      const fieldOffsetY = currentScrollY * 0.06;
       for (let i = 0; i < fieldStars.length; i++) {
         const s = fieldStars[i];
         const twinkle = Math.sin(time * s.twinkleSpeed + s.twinklePhase) * 0.35 + 0.65;
@@ -399,8 +374,7 @@ export function CelestialSky() {
         ctx.globalAlpha = alpha;
         ctx.fillStyle = s.isSilver ? '#d8e0ec' : '#ffffff';
         ctx.beginPath();
-        const sy = (s.y * height + fieldOffsetY) % height;
-        ctx.arc(s.x * width, sy, s.size, 0, Math.PI * 2);
+        ctx.arc(s.x * width, s.y * height, s.size, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -538,7 +512,6 @@ export function CelestialSky() {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', handleScroll);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
