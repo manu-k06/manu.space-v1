@@ -9,19 +9,198 @@
   padding-bottom: var(--space-2xl);
 }
 
-/* Atmospheric Mountain Celestial Backdrop */
-.journey-backdrop {
+/* ============================================
+   LIVING CELESTIAL BACKGROUND & LIVE ANIMATIONS
+   ============================================ */
+.celestial-canvas-wrap {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  background: 
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(196, 181, 164, 0.04) 0%, transparent 70%),
-    radial-gradient(circle 700px at 15% 35%, rgba(30, 28, 26, 0.35) 0%, transparent 80%),
-    radial-gradient(circle 800px at 85% 70%, rgba(26, 24, 22, 0.4) 0%, transparent 80%);
+  overflow: hidden;
   z-index: 0;
+  background: 
+    radial-gradient(ellipse 90% 45% at 50% 0%, rgba(196, 181, 164, 0.05) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(14, 14, 14, 0.98) 0%, rgba(10, 10, 10, 1) 100%);
+}
+
+/* Living Breathing Nebula Auroras */
+.nebula-cloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.nebula-cloud--top {
+  top: -150px;
+  left: 20%;
+  width: 750px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(196, 181, 164, 0.08) 0%, rgba(140, 125, 110, 0.03) 50%, transparent 75%);
+  animation: floatNebulaTop 20s ease-in-out infinite alternate;
+}
+
+.nebula-cloud--mid-left {
+  top: 35%;
+  left: -200px;
+  width: 650px;
+  height: 650px;
+  background: radial-gradient(circle, rgba(160, 145, 130, 0.06) 0%, rgba(100, 90, 80, 0.02) 55%, transparent 80%);
+  animation: floatNebulaMid 24s ease-in-out infinite alternate;
+}
+
+.nebula-cloud--bottom-right {
+  bottom: 8%;
+  right: -150px;
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(196, 181, 164, 0.07) 0%, rgba(130, 115, 100, 0.02) 60%, transparent 80%);
+  animation: floatNebulaBottom 28s ease-in-out infinite alternate;
+}
+
+@keyframes floatNebulaTop {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(40px, 30px) scale(1.08);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(-30px, 15px) scale(0.96);
+    opacity: 0.75;
+  }
+}
+
+@keyframes floatNebulaMid {
+  0% {
+    transform: translate(0, 0) scale(0.95);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(30px, -40px) scale(1.1);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(15px, 25px) scale(1);
+    opacity: 0.65;
+  }
+}
+
+@keyframes floatNebulaBottom {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translate(-45px, -30px) scale(1.12);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(20px, 20px) scale(0.94);
+    opacity: 0.7;
+  }
+}
+
+/* Starfield with Dynamic Twinkle */
+.starfield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.celestial-star {
+  position: absolute;
+  border-radius: 50%;
+  will-change: opacity, transform;
+  animation-name: starTwinklePulse;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes starTwinklePulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.25);
+  }
+}
+
+/* Periodic Cosmic Shooting Stars */
+.shooting-star {
+  position: absolute;
+  width: 110px;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(196, 181, 164, 0.45) 35%, transparent 100%);
+  border-radius: 999px;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.shooting-star--1 {
+  top: 14%;
+  right: 18%;
+  transform: rotate(-32deg);
+  animation: meteorPass1 11s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  animation-delay: 2s;
+}
+
+.shooting-star--2 {
+  top: 56%;
+  right: 28%;
+  width: 90px;
+  transform: rotate(-28deg);
+  animation: meteorPass2 16s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  animation-delay: 7.5s;
+}
+
+@keyframes meteorPass1 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(-32deg) scale(0.6);
+  }
+  3% {
+    opacity: 0.9;
+  }
+  8% {
+    opacity: 0;
+    transform: translate(-380px, 240px) rotate(-32deg) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-380px, 240px) rotate(-32deg) scale(1.1);
+  }
+}
+
+@keyframes meteorPass2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(-28deg) scale(0.6);
+  }
+  2.5% {
+    opacity: 0.85;
+  }
+  6.5% {
+    opacity: 0;
+    transform: translate(-320px, 180px) rotate(-28deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-320px, 180px) rotate(-28deg) scale(1);
+  }
 }
 
 /* Road Container */

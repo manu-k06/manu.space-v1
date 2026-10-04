@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { journeyMilestones } from '../data/journeyData';
 import { MountainRoad } from '../components/MountainRoad';
 import { MilestoneCard } from '../components/MilestoneCard';
+import { CelestialSky } from '../components/CelestialSky';
 import '../styles/journey.css';
 
 /**
@@ -10,7 +11,8 @@ import '../styles/journey.css';
  * Features:
  * - Authentic mountain road with realistic hairpin switchbacks, stone curbs & dashed stripes.
  * - Dynamic scroll-tracking starlight beacon traveling along the curves.
- * - Responsive alternating frosted glass milestone cards with project chips and altitude metrics.
+ * - Living animated celestial background with breathing nebulas, stars & meteor streaks.
+ * - Responsive alternating frosted glass milestone cards with project chips.
  */
 export function Journey() {
   const [activeStep, setActiveStep] = useState(null);
@@ -23,8 +25,8 @@ export function Journey() {
 
   return (
     <section className="section journey-section">
-      {/* Atmospheric celestial gradient */}
-      <div className="journey-backdrop" />
+      {/* Living animated celestial background */}
+      <CelestialSky />
 
       <div className="container">
         {/* Header */}
