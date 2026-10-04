@@ -117,12 +117,14 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 2. Generate Galaxy 2 Companion Spiral Particles (480 particles, 3-Arm Pinwheel)
+      // 2. Generate Galaxy 2 Companion Spiral Particles (3-Arm Pinwheel with Starburst Nodes & Dust Lanes)
       // ------------------------------------------
-      const numG2 = w > 900 ? 480 : 290;
+      const numG2 = w > 900 ? 540 : 330;
       for (let i = 0; i < numG2; i++) {
-        const isCore = Math.random() < 0.24;
+        const isCore = Math.random() < 0.22;
         let r, theta;
+        let isStarburst = false;
+        let isDust = false;
 
         if (isCore) {
           r = Math.pow(Math.random(), 2.1) * (g2.maxRadius * 0.22);
@@ -130,10 +132,26 @@ export function CelestialSky() {
         } else {
           const armIndex = i % g2.arms;
           const armOffset = (armIndex * (2 * Math.PI)) / g2.arms;
-          r = Math.pow(Math.random(), 0.90) * g2.maxRadius + 12;
-          const spiralAngle = Math.log(r / 12) * 2.15;
-          const scatter = (Math.random() - 0.5) * g2.armSpread * (r / g2.maxRadius + 0.20);
-          theta = armOffset + spiralAngle + scatter;
+
+          // 12% interstellar dark dust absorption lane particles along inner arm edges
+          if (i % 8 === 0) {
+            isDust = true;
+            r = Math.pow(Math.random(), 0.95) * (g2.maxRadius * 0.88) + 18;
+            const spiralAngle = Math.log(r / 12) * 2.15;
+            theta = armOffset + spiralAngle - 0.16 + (Math.random() - 0.5) * 0.12;
+          } else if (i % 14 === 1) {
+            // Prominent starburst cluster nodes along arm ridges
+            isStarburst = true;
+            const fraction = 0.30 + ((i % 5) / 5) * 0.60;
+            r = g2.maxRadius * fraction + (Math.random() - 0.5) * 8;
+            const spiralAngle = Math.log(r / 12) * 2.15;
+            theta = armOffset + spiralAngle + (Math.random() - 0.5) * 0.08;
+          } else {
+            r = Math.pow(Math.random(), 0.90) * g2.maxRadius + 12;
+            const spiralAngle = Math.log(r / 12) * 2.15;
+            const scatter = (Math.random() - 0.5) * g2.armSpread * (r / g2.maxRadius + 0.20);
+            theta = armOffset + spiralAngle + scatter;
+          }
         }
 
         particles.push({
@@ -141,12 +159,22 @@ export function CelestialSky() {
           r,
           theta,
           speed: (0.15 / (Math.sqrt(r) + 4.2)) * g2.baseSpeed * 300,
-          size: Math.random() < 0.09 ? 1.9 + Math.random() * 0.9 : 0.7 + Math.random() * 0.85,
-          baseAlpha: Math.random() * 0.6 + 0.3,
+          size: isDust 
+            ? Math.random() * 2.2 + 3.4 
+            : isStarburst 
+              ? Math.random() * 1.0 + 2.5 
+              : Math.random() < 0.09 ? 1.9 + Math.random() * 0.9 : 0.7 + Math.random() * 0.85,
+          baseAlpha: isDust 
+            ? Math.random() * 0.10 + 0.08 
+            : isStarburst 
+              ? Math.random() * 0.25 + 0.75 
+              : Math.random() * 0.6 + 0.3,
           twinkleSpeed: 0.014 + Math.random() * 0.028,
           twinklePhase: Math.random() * Math.PI * 2,
-          isProminent: Math.random() < 0.045,
-          isSilver: Math.random() < 0.35,
+          isProminent: isStarburst || Math.random() < 0.045,
+          isSilver: isDust ? false : Math.random() < 0.35,
+          isDust,
+          isStarburst,
         });
       }
 
@@ -209,6 +237,21 @@ export function CelestialSky() {
     window.addEventListener('resize', handleResize);
 
     // ==========================================
+    // MULTI-PLANE SCROLL PARALLAX SYSTEM
+    // ==========================================
+    let currentScrollY = 0;
+    let targetScrollY = 0;
+
+    const handleScroll = () => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      targetScrollY = Math.max(0, -rect.top);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // ==========================================
     // LIVE ANIMATION RENDER LOOP (60 FPS)
     // ==========================================
     let time = 0;
@@ -243,9 +286,18 @@ export function CelestialSky() {
       time += 1;
       ctx.clearRect(0, 0, width, height);
 
+      // Smooth exponential lerp damping for cinematic cosmic parallax inertia
+      currentScrollY += (targetScrollY - currentScrollY) * 0.08;
+
+      // 4-layer depth field parallax offsets relative to roadmap scroll
       const c1 = g1.getCenter(width, height);
+      c1.y += currentScrollY * 0.22;
+
       const c2 = g2.getCenter(width, height);
+      c2.y += currentScrollY * 0.16;
+
       const c3 = g3.getCenter(width, height);
+      c3.y += currentScrollY * 0.10;
 
       // ------------------------------------------
       // 1. Draw Galaxy 1 Spiral Galactic Core Glow
@@ -266,7 +318,7 @@ export function CelestialSky() {
       // ------------------------------------------
       // 2. Draw Galaxy 2 Companion Spiral Core & Disc Glow
       // ------------------------------------------
-      const coreR2 = g2.maxRadius * 0.60;
+      const coreR2 = g2.maxRadius * 0.62;
       ctx.save();
       ctx.translate(c2.x, c2.y);
       ctx.rotate(g2.tiltAngle);
@@ -275,9 +327,9 @@ export function CelestialSky() {
       // Diffuse elliptical galactic disk glow
       const discGrad2 = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR2);
       discGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.42)');
-      discGrad2.addColorStop(0.18, 'rgba(232, 240, 255, 0.20)');
-      discGrad2.addColorStop(0.45, 'rgba(185, 200, 225, 0.07)');
-      discGrad2.addColorStop(0.80, 'rgba(140, 150, 175, 0.015)');
+      discGrad2.addColorStop(0.18, 'rgba(230, 240, 255, 0.20)');
+      discGrad2.addColorStop(0.48, 'rgba(185, 200, 225, 0.065)');
+      discGrad2.addColorStop(0.82, 'rgba(140, 150, 175, 0.015)');
       discGrad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
       ctx.fillStyle = discGrad2;
@@ -285,15 +337,38 @@ export function CelestialSky() {
       ctx.arc(0, 0, coreR2, 0, Math.PI * 2);
       ctx.fill();
 
+      // Interstellar dust absorption ring inside core disk
+      const dustRing = ctx.createRadialGradient(0, 0, coreR2 * 0.26, 0, 0, coreR2 * 0.42);
+      dustRing.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      dustRing.addColorStop(0.5, 'rgba(10, 14, 22, 0.24)');
+      dustRing.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = dustRing;
+      ctx.beginPath();
+      ctx.arc(0, 0, coreR2 * 0.42, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner galactic bar / oval condensation
+      const barGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 36);
+      barGrad.addColorStop(0, 'rgba(255, 255, 255, 0.70)');
+      barGrad.addColorStop(0.35, 'rgba(235, 242, 255, 0.35)');
+      barGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = barGrad;
+      ctx.beginPath();
+      ctx.save();
+      ctx.scale(1.35, 0.72);
+      ctx.arc(0, 0, 36, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
       // Brilliant central galactic nucleus
-      const nucleusGrad2 = ctx.createRadialGradient(0, 0, 0, 0, 0, 22);
-      nucleusGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
-      nucleusGrad2.addColorStop(0.35, 'rgba(240, 246, 255, 0.45)');
+      const nucleusGrad2 = ctx.createRadialGradient(0, 0, 0, 0, 0, 16);
+      nucleusGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      nucleusGrad2.addColorStop(0.40, 'rgba(240, 246, 255, 0.50)');
       nucleusGrad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
       ctx.fillStyle = nucleusGrad2;
       ctx.beginPath();
-      ctx.arc(0, 0, 22, 0, Math.PI * 2);
+      ctx.arc(0, 0, 16, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
@@ -313,8 +388,9 @@ export function CelestialSky() {
       ctx.fill();
 
       // ------------------------------------------
-      // 4. Render Background Field Stars
+      // 4. Render Background Field Stars (with Infinite Parallax Wrap)
       // ------------------------------------------
+      const fieldOffsetY = currentScrollY * 0.06;
       for (let i = 0; i < fieldStars.length; i++) {
         const s = fieldStars[i];
         const twinkle = Math.sin(time * s.twinkleSpeed + s.twinklePhase) * 0.35 + 0.65;
@@ -323,7 +399,8 @@ export function CelestialSky() {
         ctx.globalAlpha = alpha;
         ctx.fillStyle = s.isSilver ? '#d8e0ec' : '#ffffff';
         ctx.beginPath();
-        ctx.arc(s.x * width, s.y * height, s.size, 0, Math.PI * 2);
+        const sy = (s.y * height + fieldOffsetY) % height;
+        ctx.arc(s.x * width, sy, s.size, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -351,8 +428,28 @@ export function CelestialSky() {
           px = c2.x + (xp * cosPhi2 - yp * sinPhi2);
           py = c2.y + (xp * sinPhi2 + yp * cosPhi2);
 
+          // Handle dark interstellar dust clouds
+          if (p.isDust) {
+            const dustTwinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.2 + 0.8;
+            ctx.globalAlpha = Math.max(0, Math.min(1, p.baseAlpha * dustTwinkle));
+            ctx.fillStyle = 'rgba(150, 165, 195, 0.40)';
+            ctx.beginPath();
+            ctx.arc(px, py, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            continue;
+          }
+
           const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
           alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
+
+          // Soft luminous aura around starburst cluster nodes
+          if (p.isStarburst && alpha > 0.4) {
+            ctx.globalAlpha = alpha * 0.45;
+            ctx.fillStyle = 'rgba(215, 235, 255, 0.6)';
+            ctx.beginPath();
+            ctx.arc(px, py, p.size * 2.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
         } else if (p.type === 'galaxy3') {
           px = c3.x + p.r * Math.cos(p.theta);
           py = c3.y + p.r * Math.sin(p.theta) * 0.85;
@@ -367,11 +464,11 @@ export function CelestialSky() {
         ctx.arc(px, py, p.size, 0, Math.PI * 2);
         ctx.fill();
 
-        // 4-point diffraction cross spikes on prominent stars
+        // 4-point diffraction cross spikes on prominent stars & starburst clusters
         if (p.isProminent && alpha > 0.55) {
           ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.75})`;
           ctx.lineWidth = 0.8;
-          const crossSize = p.size * 3.4;
+          const crossSize = p.isStarburst ? p.size * 3.8 : p.size * 3.4;
 
           ctx.beginPath();
           ctx.moveTo(px - crossSize, py);
@@ -441,6 +538,7 @@ export function CelestialSky() {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
