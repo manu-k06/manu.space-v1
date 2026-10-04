@@ -24,7 +24,7 @@ export function CelestialSky() {
       const size = (i % 6 === 0) ? 2.5 : (i % 2 === 0 ? 1.8 : 1.2);
       const duration = 2.8 + (i % 7) * 0.7; // 2.8s to 7.0s
       const delay = (i % 11) * 0.5; // 0s to 5.5s
-      const isWarm = i % 3 === 0;
+      const isSilver = i % 3 === 0;
 
       starList.push({
         id: i,
@@ -33,8 +33,8 @@ export function CelestialSky() {
         size,
         duration,
         delay,
-        color: isWarm ? 'rgba(238, 226, 210, 0.92)' : 'rgba(255, 255, 255, 0.95)',
-        glow: isWarm ? 'rgba(196, 181, 164, 0.7)' : 'rgba(255, 255, 255, 0.45)',
+        color: isSilver ? 'rgba(215, 222, 235, 0.92)' : 'rgba(255, 255, 255, 0.98)',
+        glow: isSilver ? 'rgba(180, 195, 220, 0.6)' : 'rgba(255, 255, 255, 0.5)',
       });
     }
     return starList;
