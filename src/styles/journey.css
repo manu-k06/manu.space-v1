@@ -275,15 +275,25 @@
   }
 }
 
+/* Traveled Road Illuminated Line */
+.road-traveled-light {
+  stroke: rgba(255, 255, 255, 0.75);
+  stroke-width: 3.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(196, 181, 164, 0.4));
+  pointer-events: none;
+}
+
 /* Traveling Starlight Beacon */
 .traveler-beacon-glow {
-  fill: var(--accent);
-  filter: drop-shadow(0 0 14px rgba(196, 181, 164, 0.8));
-  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.4, 1);
+  will-change: transform;
 }
 
 .traveler-beacon-core {
   fill: #ffffff;
+  filter: drop-shadow(0 0 8px #ffffff);
 }
 
 /* Waypoint SVG Node */

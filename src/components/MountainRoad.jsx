@@ -1,16 +1,18 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 /**
  * MountainRoad Component
  * 
  * Renders an authentic mountain switchback pass with realistic curves,
- * stone curbs, asphalt roadbed, animated centerline dashes, and a
- * starlight traveler beacon that glides along the switchback on scroll.
+ * stone curbs, asphalt roadbed, animated centerline dashes, a luminous
+ * traveled road illumination trail, and an ultra-smooth 60/120 FPS
+ * RAF-interpolated starlight beacon with zero React re-render overhead.
  */
 export function MountainRoad({ activeStep, setActiveStep }) {
+  const svgRef = useRef(null);
   const pathRef = useRef(null);
-  const [beaconPos, setBeaconPos] = useState({ x: 500, y: 40 });
-  const [pathLength, setPathLength] = useState(0);
+  const progressPathRef = useRef(null);
+  const beaconRef = useRef(null);
 
   // Switchback Hairpin Waypoints along the mountain pass
   const waypoints = [
@@ -36,42 +38,71 @@ export function MountainRoad({ activeStep, setActiveStep }) {
   `;
 
   useEffect(() => {
-    if (pathRef.current) {
-      const len = pathRef.current.getTotalLength();
-      setPathLength(len);
+    const svg = svgRef.current;
+    const path = pathRef.current;
+    const beacon = beaconRef.current;
+    const progressPath = progressPathRef.current;
+    if (!path || !beacon || !svg) return;
 
-      const handleScroll = () => {
-        const scrollY = window.scrollY;
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = Math.min(Math.max(scrollY / (maxScroll || 1), 0), 1);
-        
-        // Calculate point along the mountain pass
-        const point = pathRef.current.getPointAtLength(progress * len);
-        setBeaconPos({ x: point.x, y: point.y });
-      };
-
-      handleScroll();
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      return () => window.removeEventListener('scroll', handleScroll);
+    const len = path.getTotalLength();
+    if (progressPath) {
+      progressPath.style.strokeDasharray = `${len} ${len}`;
+      progressPath.style.strokeDashoffset = `${len}`;
     }
+
+    let currentProgress = 0;
+    let targetProgress = 0;
+    let animationFrameId;
+
+    const handleScroll = () => {
+      const rect = svg.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Start tracking smoothly as the road enters the viewport
+      const totalDistance = rect.height - vh * 0.35;
+      const scrolled = vh * 0.40 - rect.top;
+      targetProgress = Math.min(Math.max(scrolled / (totalDistance || 1), 0), 1);
+    };
+
+    // Continuous 60-120 FPS RAF lerp loop: converts discrete scroll notches into buttery smooth motion
+    const animate = () => {
+      currentProgress += (targetProgress - currentProgress) * 0.085;
+
+      const point = path.getPointAtLength(currentProgress * len);
+      beacon.setAttribute('transform', `translate(${point.x.toFixed(2)}, ${point.y.toFixed(2)})`);
+
+      if (progressPath) {
+        progressPath.style.strokeDashoffset = `${(len * (1 - currentProgress)).toFixed(1)}`;
+      }
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    handleScroll();
+    animate();
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
   return (
     <svg
+      ref={svgRef}
       className="switchback-svg-canvas"
       viewBox="0 0 1000 2400"
       preserveAspectRatio="none"
       aria-hidden="true"
     >
       <defs>
-        {/* Soft mountain starlight glow */}
-        <filter id="starlightGlow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="6" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
         <radialGradient id="beaconGlowGradient" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-          <stop offset="40%" stopColor="#c4b5a4" stopOpacity="0.6" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset="35%" stopColor="#c4b5a4" stopOpacity="0.65" />
+          <stop offset="70%" stopColor="#c4b5a4" stopOpacity="0.2" />
           <stop offset="100%" stopColor="#c4b5a4" stopOpacity="0" />
         </radialGradient>
       </defs>
@@ -87,6 +118,13 @@ export function MountainRoad({ activeStep, setActiveStep }) {
         ref={pathRef}
         d={roadD}
         className="road-centerline"
+      />
+
+      {/* Layer 3b: Traveled Road Illuminated Starlight Line */}
+      <path
+        ref={progressPathRef}
+        d={roadD}
+        className="road-traveled-light"
       />
 
       {/* Layer 4: Switchback Hairpin Waypoints */}
@@ -130,18 +168,18 @@ export function MountainRoad({ activeStep, setActiveStep }) {
         );
       })}
 
-      {/* Layer 5: Traveling Starlight Beacon (Tracks Scroll along road) */}
-      <g transform={`translate(${beaconPos.x}, ${beaconPos.y})`}>
+      {/* Layer 5: Traveling Starlight Beacon (Silky 60/120 FPS RAF tracking with zero React re-renders) */}
+      <g ref={beaconRef} transform="translate(500, 40)" className="traveler-beacon-glow">
         <circle
           cx="0"
           cy="0"
-          r="26"
+          r="30"
           fill="url(#beaconGlowGradient)"
         />
         <circle
           cx="0"
           cy="0"
-          r="5"
+          r="6"
           className="traveler-beacon-core"
         />
       </g>
