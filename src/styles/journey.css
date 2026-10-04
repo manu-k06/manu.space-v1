@@ -1,5 +1,5 @@
 /* ============================================
-   MOUNTAIN PASS JOURNEY ROADMAP STYLES
+   JOURNEY ROADMAP STYLES (Sleek & Compact)
    ============================================ */
 
 .journey-section {
@@ -18,48 +18,17 @@
   height: 100%;
   pointer-events: none;
   background: 
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(196, 181, 164, 0.05) 0%, transparent 70%),
-    radial-gradient(circle 700px at 15% 35%, rgba(35, 32, 28, 0.4) 0%, transparent 80%),
-    radial-gradient(circle 800px at 85% 70%, rgba(28, 26, 24, 0.5) 0%, transparent 80%);
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(196, 181, 164, 0.04) 0%, transparent 70%),
+    radial-gradient(circle 700px at 15% 35%, rgba(30, 28, 26, 0.35) 0%, transparent 80%),
+    radial-gradient(circle 800px at 85% 70%, rgba(26, 24, 22, 0.4) 0%, transparent 80%);
   z-index: 0;
-}
-
-/* Header styling */
-.journey-header {
-  position: relative;
-  z-index: 2;
-  margin-bottom: var(--space-xl);
-}
-
-.journey-meta-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--accent);
-  margin-bottom: var(--space-xs);
-  padding: 0.3rem 0.8rem;
-  border-radius: 999px;
-  background: rgba(196, 181, 164, 0.08);
-  border: 1px solid rgba(196, 181, 164, 0.18);
-}
-
-.journey-pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: var(--accent);
-  box-shadow: 0 0 10px var(--accent);
-  animation: pulseBeacon 2s ease-in-out infinite;
 }
 
 /* Road Container */
 .mountain-roadmap-wrap {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
   z-index: 2;
 }
@@ -77,8 +46,8 @@
 
 /* Road Path SVG Styles */
 .road-curb {
-  stroke: rgba(65, 60, 55, 0.6);
-  stroke-width: 44px;
+  stroke: rgba(65, 60, 55, 0.5);
+  stroke-width: 38px;
   stroke-linecap: round;
   stroke-linejoin: round;
   fill: none;
@@ -86,46 +55,45 @@
 
 .road-asphalt {
   stroke: #141312;
-  stroke-width: 34px;
+  stroke-width: 30px;
   stroke-linecap: round;
   stroke-linejoin: round;
   fill: none;
-  filter: drop-shadow(0 0 16px rgba(0, 0, 0, 0.9));
+  filter: drop-shadow(0 0 14px rgba(0, 0, 0, 0.9));
 }
 
 .road-centerline {
-  stroke: rgba(220, 216, 212, 0.65);
-  stroke-width: 2.5px;
+  stroke: rgba(220, 216, 212, 0.6);
+  stroke-width: 2px;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 12 16;
+  stroke-dasharray: 10 14;
   fill: none;
   animation: roadForwardDash 2.5s linear infinite;
 }
 
 @keyframes roadForwardDash {
   to {
-    stroke-dashoffset: -28;
+    stroke-dashoffset: -24;
   }
 }
 
 /* Traveling Starlight Beacon */
 .traveler-beacon-glow {
   fill: var(--accent);
-  filter: drop-shadow(0 0 16px rgba(196, 181, 164, 0.85));
+  filter: drop-shadow(0 0 14px rgba(196, 181, 164, 0.85));
   transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.4, 1);
 }
 
 .traveler-beacon-core {
   fill: #ffffff;
-  box-shadow: 0 0 10px #ffffff;
 }
 
 /* Waypoint SVG Node */
 .waypoint-node-ring {
   fill: none;
   stroke: rgba(196, 181, 164, 0.35);
-  stroke-width: 2px;
+  stroke-width: 1.5px;
   animation: pulseBeaconRing 2.4s ease-out infinite;
   transform-origin: center;
 }
@@ -133,13 +101,13 @@
 .waypoint-node-disk {
   fill: #141414;
   stroke: var(--accent);
-  stroke-width: 2px;
-  filter: drop-shadow(0 0 10px rgba(196, 181, 164, 0.35));
+  stroke-width: 1.8px;
+  filter: drop-shadow(0 0 8px rgba(196, 181, 164, 0.3));
 }
 
 .waypoint-node-number {
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.05em;
   fill: #ffffff;
@@ -152,8 +120,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8rem;
-  padding: 2rem 0 6rem;
+  gap: 5rem;
+  padding: 1.5rem 0 4rem;
   z-index: 4;
 }
 
@@ -167,31 +135,31 @@
 
 .milestone-row--left {
   justify-content: flex-start;
-  padding-right: 48%;
+  padding-right: 54%;
 }
 
 .milestone-row--right {
   justify-content: flex-end;
-  padding-left: 48%;
+  padding-left: 54%;
 }
 
 .milestone-row--summit {
   justify-content: center;
-  padding: 0 15%;
+  padding: 0 20%;
 }
 
-/* Milestone Frosted Glass Card */
+/* Milestone Frosted Glass Card (Compact & Refined) */
 .mountain-card {
   position: relative;
   width: 100%;
-  max-width: 520px;
+  max-width: 420px;
   background: rgba(18, 17, 16, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 4px;
-  padding: 2.2rem;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+  padding: 1.35rem 1.6rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
   transition: transform var(--transition-base),
               border-color var(--transition-base),
               background var(--transition-base),
@@ -202,108 +170,84 @@
 .mountain-card:hover {
   background: rgba(24, 23, 22, 0.98);
   border-color: rgba(196, 181, 164, 0.35);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.8), 0 0 24px rgba(196, 181, 164, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 18px rgba(196, 181, 164, 0.08);
 }
 
 .mountain-card--summit {
-  border-color: rgba(196, 181, 164, 0.3);
+  border-color: rgba(196, 181, 164, 0.28);
   background: rgba(22, 20, 18, 0.96);
   text-align: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 32px rgba(196, 181, 164, 0.12);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 24px rgba(196, 181, 164, 0.1);
 }
 
-.summit-flag-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  color: var(--accent);
-  margin-bottom: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.mountain-card--summit .card-header-meta {
+  justify-content: center;
+}
+
+.mountain-card--summit .card-tags,
+.mountain-card--summit .card-project-links {
+  justify-content: center;
 }
 
 /* Card Header */
 .card-header-meta {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-sm);
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  margin-bottom: 0.55rem;
 }
 
 .card-step-badge {
   font-family: var(--font-sans);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
   background: rgba(196, 181, 164, 0.1);
-  padding: 0.25rem 0.6rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 2px;
   border: 1px solid rgba(196, 181, 164, 0.18);
+  white-space: nowrap;
 }
 
-.card-altitude {
-  font-family: var(--font-sans);
+.card-category {
   font-size: 0.72rem;
   letter-spacing: 0.08em;
-  color: var(--text-dim);
   text-transform: uppercase;
+  color: var(--text-dim);
 }
 
 /* Card Content */
 .card-title {
-  font-size: 1.65rem;
+  font-size: 1.3rem;
   line-height: 1.25;
   color: var(--text-primary);
-  margin-bottom: 0.4rem;
-}
-
-.card-category {
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: var(--space-sm);
-  display: block;
+  margin-bottom: 0.35rem;
 }
 
 .card-desc {
-  font-size: 0.95rem;
-  line-height: 1.7;
+  font-size: 0.88rem;
+  line-height: 1.6;
   color: var(--text-secondary);
-  margin-bottom: 1.2rem;
-}
-
-.card-quote {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.05rem;
-  color: var(--accent);
-  margin-bottom: 1.2rem;
-  padding-left: 0.8rem;
-  border-left: 2px solid rgba(196, 181, 164, 0.4);
+  margin-bottom: 0.85rem;
 }
 
 /* Tag Pills */
 .card-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-bottom: 1rem;
+  gap: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .tag-pill {
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  padding: 0.25rem 0.65rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  padding: 0.18rem 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 2px;
   color: var(--text-secondary);
   transition: color var(--transition-fast), border-color var(--transition-fast);
@@ -311,29 +255,29 @@
 
 .mountain-card:hover .tag-pill {
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 /* Project Links inside Milestones */
 .card-project-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .project-link-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.05em;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
   color: var(--text-primary);
-  background: rgba(196, 181, 164, 0.12);
-  border: 1px solid rgba(196, 181, 164, 0.25);
-  padding: 0.35rem 0.8rem;
+  background: rgba(196, 181, 164, 0.1);
+  border: 1px solid rgba(196, 181, 164, 0.22);
+  padding: 0.25rem 0.65rem;
   border-radius: 2px;
   transition: background var(--transition-fast),
               border-color var(--transition-fast),
@@ -341,13 +285,13 @@
 }
 
 .project-link-chip:hover {
-  background: rgba(196, 181, 164, 0.28);
+  background: rgba(196, 181, 164, 0.25);
   border-color: var(--accent);
   color: #ffffff;
 }
 
 .project-link-arrow {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   transition: transform var(--transition-fast);
 }
 
@@ -356,24 +300,13 @@
 }
 
 /* Keyframes */
-@keyframes pulseBeacon {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.4);
-    opacity: 0.6;
-  }
-}
-
 @keyframes pulseBeaconRing {
   0% {
-    r: 16px;
+    r: 14px;
     opacity: 0.8;
   }
   100% {
-    r: 32px;
+    r: 28px;
     opacity: 0;
   }
 }
@@ -387,11 +320,11 @@
   }
 
   .milestones-flow {
-    gap: 3.5rem;
-    padding: 1.5rem 0;
+    gap: 2.5rem;
+    padding: 1rem 0;
     border-left: 2px dashed rgba(196, 181, 164, 0.25);
-    margin-left: 1rem;
-    padding-left: 1.8rem;
+    margin-left: 0.8rem;
+    padding-left: 1.5rem;
   }
 
   .milestone-row--left,
@@ -403,24 +336,30 @@
 
   .mountain-card {
     max-width: 100%;
-    padding: 1.6rem;
+    padding: 1.25rem 1.4rem;
   }
 
   .mountain-card--summit {
     text-align: left;
   }
 
+  .mountain-card--summit .card-header-meta,
+  .mountain-card--summit .card-tags,
+  .mountain-card--summit .card-project-links {
+    justify-content: flex-start;
+  }
+
   /* Node dot on the left timeline on mobile */
   .mountain-card::before {
     content: '';
     position: absolute;
-    left: -2.45rem;
-    top: 2rem;
-    width: 14px;
-    height: 14px;
+    left: -2.15rem;
+    top: 1.5rem;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: #141414;
     border: 2px solid var(--accent);
-    box-shadow: 0 0 10px rgba(196, 181, 164, 0.4);
+    box-shadow: 0 0 8px rgba(196, 181, 164, 0.4);
   }
 }

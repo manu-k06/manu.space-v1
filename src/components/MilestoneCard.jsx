@@ -3,50 +3,33 @@ import React from 'react';
 /**
  * MilestoneCard Component
  * 
- * Renders an individual checkpoint card along the mountain switchback.
+ * Sleek, compact checkpoint card along the roadmap.
  */
 export function MilestoneCard({ milestone, isActive, onMouseEnter, onMouseLeave }) {
-  const isSummit = milestone.isCurrent;
+  const isCurrent = milestone.isCurrent;
 
   return (
     <article
-      className={`mountain-card ${isSummit ? 'mountain-card--summit' : ''}`}
+      className={`mountain-card ${isCurrent ? 'mountain-card--summit' : ''}`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       style={{
         borderColor: isActive ? 'var(--accent)' : undefined,
       }}
     >
-      {isSummit && (
-        <div className="summit-flag-badge">
-          <span>🚩</span>
-          <span>The Summit Peak</span>
-        </div>
-      )}
-
-      {/* Header Meta */}
+      {/* Header Row: Year Badge + Category */}
       <div className="card-header-meta">
         <span className="card-step-badge">
-          Step {milestone.step} • {milestone.year}
+          {milestone.step} • {milestone.year}
         </span>
-        <span className="card-altitude">{milestone.altitude}</span>
+        <span className="card-category">{milestone.category}</span>
       </div>
-
-      {/* Category */}
-      <span className="card-category">{milestone.category}</span>
 
       {/* Title */}
       <h3 className="card-title">{milestone.title}</h3>
 
       {/* Narrative Description */}
       <p className="card-desc">{milestone.description}</p>
-
-      {/* Inspirational Quote if available */}
-      {milestone.quote && (
-        <blockquote className="card-quote">
-          {milestone.quote}
-        </blockquote>
-      )}
 
       {/* Key Focus Tags */}
       {milestone.tags && milestone.tags.length > 0 && (

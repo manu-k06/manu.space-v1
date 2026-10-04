@@ -28,17 +28,13 @@ export function Journey() {
 
       <div className="container">
         {/* Header */}
-        <div className="journey-header fade-in">
-          <div className="journey-meta-badge">
-            <span className="journey-pulse-dot" />
-            <span>The Switchback Expedition</span>
-          </div>
-          <h2 style={{ margin: 'var(--space-xs) 0 var(--space-sm)' }}>
-            The Mountain Pass.
+        <div className="fade-in" style={{ marginBottom: 'var(--space-xl)' }}>
+          <span className="label">Journey</span>
+          <h2 style={{ margin: 'var(--space-sm) 0 var(--space-md)' }}>
+            A steady exposure.
           </h2>
           <p style={{ maxWidth: '64ch', color: 'var(--text-secondary)' }}>
-            A continuous ascent through hairpin turns, fundamental detours, and rapid shipping — 
-            climbing from base camp toward high alpine systems engineering.
+            The milestones, detours, and orbits that shaped the path so far.
           </p>
         </div>
 
