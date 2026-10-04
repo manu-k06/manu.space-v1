@@ -57,7 +57,7 @@
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #aaa;
+  color: var(--text-secondary);
   transition: color var(--transition-fast);
   position: relative;
 }
@@ -208,6 +208,7 @@
 
 .project-title {
   font-size: 1.4rem;
+  color: var(--text-primary);
 }
 
 .project-arrow {
@@ -220,6 +221,11 @@
   color: var(--text-primary);
   transform: translate(2px, -2px);
 }
+
+.project-card:hover .timeline-description {
+  color: #ffffff;
+}
+
 
 /* --- Contact Section --- */
 .contact-wrapper {

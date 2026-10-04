@@ -13,9 +13,9 @@
   --bg-elevated:  #1c1c1c;
 
   /* Text */
-  --text-primary:   #e8e4e0;
-  --text-secondary: #8a8580;
-  --text-dim:       #4a4745;
+  --text-primary:   #ffffff;
+  --text-secondary: #dcd8d4;
+  --text-dim:       #9a9590;
 
   /* Accent */
   --accent:        #c4b5a4;
@@ -64,7 +64,7 @@ body {
   background-color: var(--bg-deep);
   color: var(--text-secondary);
   font-family: var(--font-sans);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 1rem;
   line-height: 1.7;
   overflow-x: hidden;
