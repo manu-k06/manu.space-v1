@@ -1,15 +1,42 @@
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 
 /**
  * Global Navigation Component.
  * 
- * Uses React Router's `NavLink` to automatically determine if a link
- * is active without having to hardcode "active" on individual pages.
+ * Features:
+ * - Route awareness: automatically applies subpage styling on non-home pages
+ * - Scroll awareness: applies frosted glass backdrop on scroll or subpages
+ *   to completely prevent navbar text collisions with scrolling page content.
+ * - Active route styling via React Router's `NavLink`.
  */
 export function Navbar() {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navClasses = [
+    'site-nav',
+    'fade-in',
+    !isHome ? 'site-nav--subpage' : '',
+    isScrolled ? 'site-nav--scrolled' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <nav className="site-nav fade-in">
+    <nav className={navClasses}>
+
       <div className="container">
         <Link to="/" className="brand">
           Manu.

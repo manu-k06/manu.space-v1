@@ -8,10 +8,30 @@
   top: 0;
   left: 0;
   width: 100%;
-  padding: var(--space-md) 0;
+  padding: 1.5rem 0;
   z-index: 100;
-  mix-blend-mode: difference; /* Ensures text is visible across light/dark parts of the image */
+  transition: background-color var(--transition-base),
+              backdrop-filter var(--transition-base),
+              border-color var(--transition-base),
+              padding var(--transition-base);
 }
+
+/* On Home at top: blend over hero image */
+.site-nav:not(.site-nav--subpage):not(.site-nav--scrolled) {
+  mix-blend-mode: difference;
+}
+
+/* On subpages OR when scrolled: frosted glass to prevent content collision */
+.site-nav.site-nav--subpage,
+.site-nav.site-nav--scrolled {
+  background-color: rgba(14, 14, 14, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  mix-blend-mode: normal;
+  padding: 1rem 0;
+}
+
 
 .site-nav .container {
   display: flex;
@@ -242,8 +262,15 @@
 }
 
 @media (max-width: 768px) {
+  :root {
+    --nav-height: 85px;
+  }
   .site-nav {
     padding: var(--space-sm) 0;
+  }
+  .site-nav.site-nav--subpage,
+  .site-nav.site-nav--scrolled {
+    padding: 0.85rem 0;
   }
   .site-nav .container {
     flex-direction: column;

@@ -33,6 +33,9 @@
   --space-xl:  6rem;
   --space-2xl: 10rem;
 
+  /* Navigation Height */
+  --nav-height: 72px;
+
   /* Transitions */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
@@ -142,14 +145,18 @@ p {
 }
 
 .section {
-  padding: var(--space-xl) 0;
+  padding-top: calc(var(--nav-height) + var(--space-md));
+  padding-bottom: var(--space-xl);
   flex: 1;
 }
 
 .section--full {
-  min-height: calc(100vh - 120px);
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
+  padding-top: calc(var(--nav-height) + var(--space-sm));
+  padding-bottom: var(--space-lg);
 }
 
 /* --- Animations --- */

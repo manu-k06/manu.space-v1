@@ -11,7 +11,8 @@ import { ProjectCard } from '../components/ProjectCard';
 export function Projects() {
   return (
     <section className="section">
-      <div className="container" style={{ paddingTop: 'var(--space-2xl)' }}>
+      <div className="container">
+
         <div className="fade-in">
           <span className="label">Selected Work</span>
           <h2 style={{ margin: 'var(--space-sm) 0 var(--space-md)' }}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
@@ -13,6 +13,11 @@ import { Footer } from './Footer';
 export function Layout() {
   const location = useLocation();
   const isHome = location.pathname === '/';
+
+  // Automatically reset scroll to top on route navigation to prevent top-offset collisions
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <>
