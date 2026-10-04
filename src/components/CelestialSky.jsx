@@ -1,15 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 
 /**
- * CelestialSky Component (Live Procedural Black & White Deep Space Simulation)
+ * CelestialSky Component (Live Procedural Deep Space Cosmos)
  * 
  * Features:
- * 1. Primary Swirling Spiral Galaxy (Upper Right) with Keplerian differential rotation.
- * 2. Supermassive Black Hole (Mid Right) with Einstein gravitational lensing arcs,
- *    an event horizon shadow, a razor-thin photon ring, and relativistic Doppler beaming.
- * 3. Secondary Globular Satellite Cluster (Lower Left) with spherical orbital dynamics.
- * 4. Ambient field stars with individual twinkling & periodic cosmic shooting stars.
- * 5. Pure high-contrast black & white aesthetic, 60 FPS hardware accelerated, retina ready.
+ * 1. Galaxy 1 (Upper Right): Grand Spiral Galaxy with differential Keplerian rotation.
+ * 2. Galaxy 2 (Mid Right): Elegant Barred Spiral Galaxy replacing the black hole.
+ * 3. Galaxy 3 (Lower Left): Globular Satellite Cluster adding depth to the lower pass.
+ * 4. Rich Multi-Comet System: Frequent, simultaneous shooting stars & grand comets
+ *    with glowing nucleus cores and long sweeping ion dust tails.
+ * 5. Ambient Field Stars: Shimmering background stars with independent twinkle cycles.
+ * 6. 100% High-Contrast Black & White / Silver aesthetic, 60 FPS hardware-accelerated.
  */
 export function CelestialSky() {
   const canvasRef = useRef(null);
@@ -30,9 +31,9 @@ export function CelestialSky() {
     // ==========================================
     let particles = [];
     let fieldStars = [];
-    let meteors = [];
+    let comets = [];
 
-    // Galaxy 1: Primary 3D Tilted Spiral Galaxy (Upper Right)
+    // Galaxy 1: Primary Grand Spiral Galaxy (Upper Right)
     const g1 = {
       getCenter: (w, h) => ({
         x: w > 900 ? w * 0.78 : w * 0.72,
@@ -46,21 +47,22 @@ export function CelestialSky() {
       baseSpeed: 0.00065,
     };
 
-    // Black Hole: Supermassive Relativistic Singularity (Mid-Right Pass)
-    const bh = {
+    // Galaxy 2: Barred Spiral Galaxy (Mid-Right Pass, Replaces Black Hole)
+    const g2 = {
       getCenter: (w, h) => ({
         x: w > 900 ? w * 0.82 : w * 0.78,
-        y: Math.min(Math.max(h * 0.45, 800), 1250),
+        y: Math.min(Math.max(h * 0.46, 800), 1250),
       }),
-      horizonRadius: 26,
-      diskRadius: 155,
-      tiltRatio: 0.35, // Flattened 3D accretion disk perspective
-      tiltAngle: 0.32,  // Accretion disk slant
-      baseSpeed: 0.0024,
+      arms: 2,
+      armSpread: 0.40,
+      tiltRatio: 0.52, // Distinct 3D perspective tilt
+      tiltAngle: 0.35,  // Angled orientation
+      maxRadius: 290,
+      baseSpeed: 0.00055,
     };
 
-    // Galaxy 2: Secondary Globular Satellite Cluster (Lower Left)
-    const g2 = {
+    // Galaxy 3: Globular Satellite Cluster (Lower Left)
+    const g3 = {
       getCenter: (w, h) => ({
         x: w > 900 ? w * 0.16 : w * 0.22,
         y: h * 0.74,
@@ -72,18 +74,17 @@ export function CelestialSky() {
     const initSimulation = (w, h) => {
       particles = [];
       fieldStars = [];
-      meteors = [];
+      comets = [];
 
       // Calculate responsive radii
       g1.maxRadius = Math.min(Math.max(w * 0.32, 240), 380);
-      g2.maxRadius = Math.min(Math.max(w * 0.19, 150), 220);
-      bh.diskRadius = Math.min(Math.max(w * 0.16, 110), 170);
-      bh.horizonRadius = Math.max(bh.diskRadius * 0.17, 20);
+      g2.maxRadius = Math.min(Math.max(w * 0.26, 180), 310);
+      g3.maxRadius = Math.min(Math.max(w * 0.18, 140), 220);
 
       // ------------------------------------------
-      // 1. Generate Galaxy 1 Spiral Particles (650 particles)
+      // 1. Generate Galaxy 1 Spiral Particles (600 particles)
       // ------------------------------------------
-      const numG1 = w > 900 ? 650 : 380;
+      const numG1 = w > 900 ? 600 : 360;
       for (let i = 0; i < numG1; i++) {
         const isCore = Math.random() < 0.26;
         let r, theta;
@@ -115,45 +116,53 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 2. Generate Black Hole Accretion Disk Particles (340 particles)
+      // 2. Generate Galaxy 2 Barred Spiral Particles (480 particles)
       // ------------------------------------------
-      const numBH = w > 900 ? 340 : 200;
-      for (let i = 0; i < numBH; i++) {
-        // High particle density concentrated near the event horizon
-        const rNorm = Math.pow(Math.random(), 1.6);
-        const r = bh.horizonRadius * 1.08 + rNorm * (bh.diskRadius - bh.horizonRadius * 1.08);
-        const theta = Math.random() * Math.PI * 2;
-
-        // Relativistic Keplerian velocity: inner matter orbits at blistering speeds
-        const orbitalSpeed = (32 / Math.pow(r, 1.15)) * bh.baseSpeed;
-
-        particles.push({
-          type: 'blackhole',
-          r,
-          theta,
-          speed: orbitalSpeed,
-          size: Math.random() < 0.12 ? 1.8 + Math.random() * 0.7 : 0.75 + Math.random() * 0.75,
-          baseAlpha: Math.random() * 0.65 + 0.35,
-          twinkleSpeed: 0.03 + Math.random() * 0.05,
-          twinklePhase: Math.random() * Math.PI * 2,
-          isProminent: false,
-          isSilver: Math.random() < 0.3,
-        });
-      }
-
-      // ------------------------------------------
-      // 3. Generate Galaxy 2 Globular Satellite (200 particles)
-      // ------------------------------------------
-      const numG2 = w > 900 ? 200 : 120;
+      const numG2 = w > 900 ? 480 : 280;
       for (let i = 0; i < numG2; i++) {
-        const r = Math.pow(Math.random(), 1.7) * g2.maxRadius;
-        const theta = Math.random() * Math.PI * 2;
+        const isCore = Math.random() < 0.28;
+        let r, theta;
+
+        if (isCore) {
+          // Elongated central galactic bar
+          r = Math.pow(Math.random(), 1.8) * (g2.maxRadius * 0.26);
+          theta = (Math.random() - 0.5) * 0.6 + (Math.random() < 0.5 ? 0 : Math.PI);
+        } else {
+          const armIndex = i % g2.arms;
+          const armOffset = (armIndex * (2 * Math.PI)) / g2.arms;
+          r = Math.pow(Math.random(), 0.94) * g2.maxRadius + 12;
+          const spiralAngle = Math.log(r / 12) * 1.75;
+          const scatter = (Math.random() - 0.5) * g2.armSpread * (r / g2.maxRadius + 0.15);
+          theta = armOffset + spiralAngle + scatter;
+        }
 
         particles.push({
           type: 'galaxy2',
           r,
           theta,
-          speed: (0.10 / (Math.sqrt(r) + 5)) * g2.baseSpeed * 240,
+          speed: (0.14 / (Math.sqrt(r) + 4.5)) * g2.baseSpeed * 300,
+          size: Math.random() < 0.07 ? 1.9 + Math.random() * 0.8 : 0.75 + Math.random() * 0.8,
+          baseAlpha: Math.random() * 0.6 + 0.3,
+          twinkleSpeed: 0.014 + Math.random() * 0.025,
+          twinklePhase: Math.random() * Math.PI * 2,
+          isProminent: Math.random() < 0.035,
+          isSilver: Math.random() < 0.4,
+        });
+      }
+
+      // ------------------------------------------
+      // 3. Generate Galaxy 3 Globular Satellite (180 particles)
+      // ------------------------------------------
+      const numG3 = w > 900 ? 180 : 110;
+      for (let i = 0; i < numG3; i++) {
+        const r = Math.pow(Math.random(), 1.7) * g3.maxRadius;
+        const theta = Math.random() * Math.PI * 2;
+
+        particles.push({
+          type: 'galaxy3',
+          r,
+          theta,
+          speed: (0.10 / (Math.sqrt(r) + 5)) * g3.baseSpeed * 240,
           size: 0.7 + Math.random() * 0.9,
           baseAlpha: Math.random() * 0.5 + 0.2,
           twinkleSpeed: 0.012 + Math.random() * 0.02,
@@ -206,8 +215,29 @@ export function CelestialSky() {
     const cosPhi1 = Math.cos(g1.tiltAngle);
     const sinPhi1 = Math.sin(g1.tiltAngle);
 
-    const cosPhiBH = Math.cos(bh.tiltAngle);
-    const sinPhiBH = Math.sin(bh.tiltAngle);
+    const cosPhi2 = Math.cos(g2.tiltAngle);
+    const sinPhi2 = Math.sin(g2.tiltAngle);
+
+    // Helper to spawn a dynamic comet
+    const spawnComet = () => {
+      const isGrandComet = Math.random() < 0.25;
+      const startX = Math.random() * (width * 0.8) + width * 0.2;
+      const startY = Math.random() * (height * 0.65) + 40;
+      const speed = isGrandComet ? Math.random() * 4 + 5 : Math.random() * 7 + 8;
+      const angle = (Math.random() * 0.25 + 0.52); // ~ 30° to 45° angle
+
+      comets.push({
+        x: startX,
+        y: startY,
+        dx: -Math.cos(angle) * speed,
+        dy: Math.sin(angle) * speed,
+        len: isGrandComet ? Math.random() * 90 + 110 : Math.random() * 50 + 55,
+        headSize: isGrandComet ? 2.5 : 1.5,
+        life: 1.0,
+        decay: isGrandComet ? 0.012 : 0.022,
+        isGrand: isGrandComet,
+      });
+    };
 
     const render = () => {
       time += 1;
@@ -215,15 +245,15 @@ export function CelestialSky() {
 
       const c1 = g1.getCenter(width, height);
       const c2 = g2.getCenter(width, height);
-      const cBH = bh.getCenter(width, height);
+      const c3 = g3.getCenter(width, height);
 
       // ------------------------------------------
-      // 1. Draw Primary Spiral Galactic Nucleus Glow
+      // 1. Draw Galaxy 1 Spiral Galactic Core Glow
       // ------------------------------------------
       const coreR1 = g1.maxRadius * 0.65;
       const coreGrad1 = ctx.createRadialGradient(c1.x, c1.y, 0, c1.x, c1.y, coreR1);
-      coreGrad1.addColorStop(0, 'rgba(255, 255, 255, 0.45)');
-      coreGrad1.addColorStop(0.15, 'rgba(235, 240, 250, 0.22)');
+      coreGrad1.addColorStop(0, 'rgba(255, 255, 255, 0.48)');
+      coreGrad1.addColorStop(0.15, 'rgba(235, 240, 250, 0.24)');
       coreGrad1.addColorStop(0.40, 'rgba(190, 200, 220, 0.08)');
       coreGrad1.addColorStop(0.75, 'rgba(140, 150, 170, 0.02)');
       coreGrad1.addColorStop(1, 'rgba(0, 0, 0, 0)');
@@ -234,13 +264,14 @@ export function CelestialSky() {
       ctx.fill();
 
       // ------------------------------------------
-      // 2. Draw Secondary Globular Core Glow
+      // 2. Draw Galaxy 2 Barred Spiral Core Glow
       // ------------------------------------------
-      const coreR2 = g2.maxRadius * 0.55;
+      const coreR2 = g2.maxRadius * 0.60;
       const coreGrad2 = ctx.createRadialGradient(c2.x, c2.y, 0, c2.x, c2.y, coreR2);
-      coreGrad2.addColorStop(0, 'rgba(240, 245, 255, 0.28)');
-      coreGrad2.addColorStop(0.25, 'rgba(190, 200, 220, 0.09)');
-      coreGrad2.addColorStop(0.70, 'rgba(140, 150, 170, 0.02)');
+      coreGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.42)');
+      coreGrad2.addColorStop(0.18, 'rgba(230, 238, 252, 0.20)');
+      coreGrad2.addColorStop(0.45, 'rgba(180, 195, 220, 0.07)');
+      coreGrad2.addColorStop(0.80, 'rgba(130, 145, 170, 0.015)');
       coreGrad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
       ctx.fillStyle = coreGrad2;
@@ -249,52 +280,19 @@ export function CelestialSky() {
       ctx.fill();
 
       // ------------------------------------------
-      // 3. Draw Black Hole Gravitational Lensing Halo (Einstein Arcs)
+      // 3. Draw Galaxy 3 Globular Core Glow
       // ------------------------------------------
-      // Outer diffuse gravitational glow
-      const bhGlowR = bh.diskRadius * 1.1;
-      const bhGrad = ctx.createRadialGradient(cBH.x, cBH.y, bh.horizonRadius, cBH.x, cBH.y, bhGlowR);
-      bhGrad.addColorStop(0, 'rgba(255, 255, 255, 0.35)');
-      bhGrad.addColorStop(0.2, 'rgba(220, 225, 240, 0.18)');
-      bhGrad.addColorStop(0.55, 'rgba(160, 175, 205, 0.05)');
-      bhGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      const coreR3 = g3.maxRadius * 0.55;
+      const coreGrad3 = ctx.createRadialGradient(c3.x, c3.y, 0, c3.x, c3.y, coreR3);
+      coreGrad3.addColorStop(0, 'rgba(240, 245, 255, 0.28)');
+      coreGrad3.addColorStop(0.25, 'rgba(190, 200, 220, 0.09)');
+      coreGrad3.addColorStop(0.70, 'rgba(140, 150, 170, 0.02)');
+      coreGrad3.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
-      ctx.fillStyle = bhGrad;
+      ctx.fillStyle = coreGrad3;
       ctx.beginPath();
-      ctx.arc(cBH.x, cBH.y, bhGlowR, 0, Math.PI * 2);
+      ctx.arc(c3.x, c3.y, coreR3, 0, Math.PI * 2);
       ctx.fill();
-
-      // Upper Gravitational Lensing Arc (Light bent over the top of the event horizon)
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(
-        cBH.x,
-        cBH.y - bh.horizonRadius * 0.35,
-        bh.diskRadius * 0.68,
-        bh.horizonRadius * 1.35,
-        bh.tiltAngle * 0.5,
-        Math.PI * 0.85,
-        Math.PI * 2.15
-      );
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
-      ctx.lineWidth = 2.2;
-      ctx.stroke();
-
-      // Lower Lensing Arc
-      ctx.beginPath();
-      ctx.ellipse(
-        cBH.x,
-        cBH.y + bh.horizonRadius * 0.35,
-        bh.diskRadius * 0.62,
-        bh.horizonRadius * 1.1,
-        bh.tiltAngle * 0.5,
-        0,
-        Math.PI * 1.0
-      );
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
-      ctx.lineWidth = 1.6;
-      ctx.stroke();
-      ctx.restore();
 
       // ------------------------------------------
       // 4. Render Background Field Stars
@@ -312,11 +310,8 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 5. Render Live Orbiting Galaxy & Black Hole Particles
+      // 5. Render Live Orbiting Galaxy Particles
       // ------------------------------------------
-      // Separate black hole particles into background and foreground for 3D depth
-      const bhForegroundParticles = [];
-
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         p.theta += p.speed;
@@ -333,28 +328,19 @@ export function CelestialSky() {
           const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
           alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
         } else if (p.type === 'galaxy2') {
-          px = c2.x + p.r * Math.cos(p.theta);
-          py = c2.y + p.r * Math.sin(p.theta) * 0.85;
+          const xp = p.r * Math.cos(p.theta);
+          const yp = p.r * Math.sin(p.theta) * g2.tiltRatio;
+          px = c2.x + (xp * cosPhi2 - yp * sinPhi2);
+          py = c2.y + (xp * sinPhi2 + yp * cosPhi2);
 
           const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
           alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
-        } else if (p.type === 'blackhole') {
-          const xp = p.r * Math.cos(p.theta);
-          const yp = p.r * Math.sin(p.theta) * bh.tiltRatio;
-          px = cBH.x + (xp * cosPhiBH - yp * sinPhiBH);
-          py = cBH.y + (xp * sinPhiBH + yp * cosPhiBH);
+        } else if (p.type === 'galaxy3') {
+          px = c3.x + p.r * Math.cos(p.theta);
+          py = c3.y + p.r * Math.sin(p.theta) * 0.85;
 
-          // Relativistic Doppler Beaming: Approaching matter on left is brighter
-          const doppler = 1.0 + 0.5 * Math.sin(p.theta);
-          const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.2 + 0.8;
-          alpha = Math.max(0, Math.min(1, p.baseAlpha * doppler * twinkle));
-
-          // If particle passes in the foreground (below the event horizon in Y),
-          // defer drawing until after the event horizon disk is rendered
-          if (yp > 0) {
-            bhForegroundParticles.push({ px, py, size: p.size, alpha, isSilver: p.isSilver });
-            continue;
-          }
+          const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
+          alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
         }
 
         ctx.globalAlpha = alpha;
@@ -363,7 +349,7 @@ export function CelestialSky() {
         ctx.arc(px, py, p.size, 0, Math.PI * 2);
         ctx.fill();
 
-        // 4-point diffraction spike on prominent galaxy stars
+        // 4-point diffraction cross spikes on prominent stars
         if (p.isProminent && alpha > 0.55) {
           ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.75})`;
           ctx.lineWidth = 0.8;
@@ -379,81 +365,55 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 6. Render Black Hole Event Horizon Shadow & Photon Sphere
+      // 6. Active Multi-Comet System (Frequent & Luminous)
       // ------------------------------------------
-      ctx.globalAlpha = 1.0;
-
-      // Event Horizon (Absolute Pitch-Black Shadow)
-      ctx.fillStyle = '#050505';
-      ctx.beginPath();
-      ctx.arc(cBH.x, cBH.y, bh.horizonRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Brilliant Razor-Thin Photon Sphere Ring
-      ctx.save();
-      ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
-      ctx.shadowBlur = 10;
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1.8;
-      ctx.beginPath();
-      ctx.arc(cBH.x, cBH.y, bh.horizonRadius, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-
-      // ------------------------------------------
-      // 7. Render Foreground Accretion Disk Particles
-      // ------------------------------------------
-      for (let i = 0; i < bhForegroundParticles.length; i++) {
-        const fp = bhForegroundParticles[i];
-        ctx.globalAlpha = fp.alpha;
-        ctx.fillStyle = fp.isSilver ? '#e4ebf5' : '#ffffff';
-        ctx.beginPath();
-        ctx.arc(fp.px, fp.py, fp.size, 0, Math.PI * 2);
-        ctx.fill();
+      // Spawn new comets frequently (up to 4 simultaneous comets)
+      if (Math.random() < 0.022 && comets.length < 4) {
+        spawnComet();
       }
 
-      // ------------------------------------------
-      // 8. Cosmic Shooting Stars
-      // ------------------------------------------
-      if (Math.random() < 0.003 && meteors.length < 2) {
-        meteors.push({
-          x: Math.random() * (width * 0.7) + width * 0.2,
-          y: Math.random() * (height * 0.4) + 60,
-          dx: -(Math.random() * 6 + 7),
-          dy: Math.random() * 4 + 4,
-          len: Math.random() * 60 + 60,
-          life: 1.0,
-          decay: Math.random() * 0.02 + 0.02,
-        });
-      }
-
-      for (let i = meteors.length - 1; i >= 0; i--) {
-        const m = meteors[i];
+      for (let i = comets.length - 1; i >= 0; i--) {
+        const m = comets[i];
         m.x += m.dx;
         m.y += m.dy;
         m.life -= m.decay;
 
-        if (m.life <= 0) {
-          meteors.splice(i, 1);
+        if (m.life <= 0 || m.x < -100 || m.y > height + 100) {
+          comets.splice(i, 1);
           continue;
         }
 
-        const grad = ctx.createLinearGradient(
-          m.x,
-          m.y,
-          m.x - (m.dx * m.len) / 10,
-          m.y - (m.dy * m.len) / 10
-        );
-        grad.addColorStop(0, `rgba(255, 255, 255, ${m.life})`);
-        grad.addColorStop(0.3, `rgba(210, 220, 240, ${m.life * 0.6})`);
+        const tailX = m.x - (m.dx * m.len) / 10;
+        const tailY = m.y - (m.dy * m.len) / 10;
+
+        // Coma / Ion Dust Tail
+        const grad = ctx.createLinearGradient(m.x, m.y, tailX, tailY);
+        grad.addColorStop(0, `rgba(255, 255, 255, ${m.life * 0.95})`);
+        grad.addColorStop(0.2, `rgba(220, 230, 250, ${m.life * 0.65})`);
+        grad.addColorStop(0.6, `rgba(180, 195, 225, ${m.life * 0.25})`);
         grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
         ctx.strokeStyle = grad;
-        ctx.lineWidth = 1.6;
+        ctx.lineWidth = m.isGrand ? 2.4 : 1.6;
         ctx.beginPath();
         ctx.moveTo(m.x, m.y);
-        ctx.lineTo(m.x - (m.dx * m.len) / 10, m.y - (m.dy * m.len) / 10);
+        ctx.lineTo(tailX, tailY);
         ctx.stroke();
+
+        // Luminous Comet Nucleus Head
+        ctx.globalAlpha = m.life;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.headSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Soft outer coma glow on grand comets
+        if (m.isGrand) {
+          ctx.fillStyle = `rgba(220, 230, 255, ${m.life * 0.4})`;
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, m.headSize * 2.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       ctx.globalAlpha = 1;
@@ -470,7 +430,7 @@ export function CelestialSky() {
 
   return (
     <div className="celestial-canvas-wrap" aria-hidden="true">
-      {/* 100% Live Procedural Canvas Deep Space (Galaxy + Black Hole) */}
+      {/* 100% Live Procedural Canvas Deep Space (Galaxies & Comets) */}
       <canvas ref={canvasRef} className="live-galaxy-canvas" />
 
       {/* Atmospheric Cosmic Backdrop Vignettes */}
