@@ -4,9 +4,10 @@ import React, { useEffect, useRef } from 'react';
  * CelestialSky Component (Live Procedural Deep Space Cosmos)
  * 
  * Features:
- * 1. Galaxy 1 (Upper Right): Grand Spiral Galaxy with differential Keplerian rotation.
- * 2. Galaxy 2 (Mid Right): Elegant Barred Spiral Galaxy replacing the black hole.
- * 3. Galaxy 3 (Lower Left): Globular Satellite Cluster adding depth to the lower pass.
+ * 1. Galaxy 1 (Upper Right): Grand Face-On Spiral Galaxy with differential Keplerian rotation.
+ * 2. Galaxy 2 (Mid Right): Edge-On "Sombrero" Galaxy (Messier 104) with a blazing vertical core
+ *    and a razor-sharp horizontal disk bisected by a dramatic dark silhouette dust lane.
+ * 3. Galaxy 3 (Lower Left): Globular Satellite Cluster adding depth to the lower mountain pass.
  * 4. Rich Multi-Comet System: Frequent, simultaneous shooting stars & grand comets
  *    with glowing nucleus cores and long sweeping ion dust tails.
  * 5. Ambient Field Stars: Shimmering background stars with independent twinkle cycles.
@@ -47,18 +48,18 @@ export function CelestialSky() {
       baseSpeed: 0.00065,
     };
 
-    // Galaxy 2: Barred Spiral Galaxy (Mid-Right Pass, Replaces Black Hole)
+    // Galaxy 2: Edge-On Sombrero Galaxy (Messier 104, Mid-Right Pass)
     const g2 = {
       getCenter: (w, h) => ({
         x: w > 900 ? w * 0.82 : w * 0.78,
         y: Math.min(Math.max(h * 0.46, 800), 1250),
       }),
-      arms: 2,
-      armSpread: 0.40,
-      tiltRatio: 0.52, // Distinct 3D perspective tilt
-      tiltAngle: 0.35,  // Angled orientation
-      maxRadius: 290,
-      baseSpeed: 0.00055,
+      diskRadius: 280,   // Wide horizontal span
+      tiltRatio: 0.13,    // Razor-thin edge-on aspect ratio
+      tiltAngle: -0.14,   // Slight cinematic slant (~ -8 degrees)
+      bulgeRadiusX: 105,  // Broad nuclear bulge
+      bulgeRadiusY: 62,   // Vertical bulge extension
+      baseSpeed: 0.00075,
     };
 
     // Galaxy 3: Globular Satellite Cluster (Lower Left)
@@ -76,15 +77,17 @@ export function CelestialSky() {
       fieldStars = [];
       comets = [];
 
-      // Calculate responsive radii
+      // Calculate responsive dimensions
       g1.maxRadius = Math.min(Math.max(w * 0.32, 240), 380);
-      g2.maxRadius = Math.min(Math.max(w * 0.26, 180), 310);
+      g2.diskRadius = Math.min(Math.max(w * 0.28, 200), 320);
+      g2.bulgeRadiusX = g2.diskRadius * 0.38;
+      g2.bulgeRadiusY = g2.diskRadius * 0.22;
       g3.maxRadius = Math.min(Math.max(w * 0.18, 140), 220);
 
       // ------------------------------------------
-      // 1. Generate Galaxy 1 Spiral Particles (600 particles)
+      // 1. Generate Galaxy 1 Spiral Particles (580 particles)
       // ------------------------------------------
-      const numG1 = w > 900 ? 600 : 360;
+      const numG1 = w > 900 ? 580 : 350;
       for (let i = 0; i < numG1; i++) {
         const isCore = Math.random() < 0.26;
         let r, theta;
@@ -116,37 +119,35 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 2. Generate Galaxy 2 Barred Spiral Particles (480 particles)
+      // 2. Generate Galaxy 2 Edge-On Sombrero Particles (520 particles)
       // ------------------------------------------
-      const numG2 = w > 900 ? 480 : 280;
+      const numG2 = w > 900 ? 520 : 320;
       for (let i = 0; i < numG2; i++) {
-        const isCore = Math.random() < 0.28;
+        const isBulge = Math.random() < 0.32;
         let r, theta;
 
-        if (isCore) {
-          // Elongated central galactic bar
-          r = Math.pow(Math.random(), 1.8) * (g2.maxRadius * 0.26);
-          theta = (Math.random() - 0.5) * 0.6 + (Math.random() < 0.5 ? 0 : Math.PI);
+        if (isBulge) {
+          // Central spherical/elliptical stellar halo
+          r = Math.pow(Math.random(), 1.6) * g2.bulgeRadiusX;
+          theta = Math.random() * Math.PI * 2;
         } else {
-          const armIndex = i % g2.arms;
-          const armOffset = (armIndex * (2 * Math.PI)) / g2.arms;
-          r = Math.pow(Math.random(), 0.94) * g2.maxRadius + 12;
-          const spiralAngle = Math.log(r / 12) * 1.75;
-          const scatter = (Math.random() - 0.5) * g2.armSpread * (r / g2.maxRadius + 0.15);
-          theta = armOffset + spiralAngle + scatter;
+          // Razor-thin luminous outer disk rim
+          r = g2.bulgeRadiusX * 0.75 + Math.pow(Math.random(), 1.2) * (g2.diskRadius - g2.bulgeRadiusX * 0.75);
+          theta = Math.random() * Math.PI * 2;
         }
 
         particles.push({
-          type: 'galaxy2',
+          type: 'sombrero',
+          isBulge,
           r,
           theta,
-          speed: (0.14 / (Math.sqrt(r) + 4.5)) * g2.baseSpeed * 300,
-          size: Math.random() < 0.07 ? 1.9 + Math.random() * 0.8 : 0.75 + Math.random() * 0.8,
-          baseAlpha: Math.random() * 0.6 + 0.3,
+          speed: (0.14 / (Math.sqrt(r) + 4)) * g2.baseSpeed * 280,
+          size: Math.random() < 0.10 ? 1.8 + Math.random() * 0.8 : 0.7 + Math.random() * 0.75,
+          baseAlpha: isBulge ? Math.random() * 0.65 + 0.35 : Math.random() * 0.75 + 0.25,
           twinkleSpeed: 0.014 + Math.random() * 0.025,
           twinklePhase: Math.random() * Math.PI * 2,
-          isProminent: Math.random() < 0.035,
-          isSilver: Math.random() < 0.4,
+          isProminent: Math.random() < 0.03,
+          isSilver: Math.random() < 0.3,
         });
       }
 
@@ -215,16 +216,16 @@ export function CelestialSky() {
     const cosPhi1 = Math.cos(g1.tiltAngle);
     const sinPhi1 = Math.sin(g1.tiltAngle);
 
-    const cosPhi2 = Math.cos(g2.tiltAngle);
-    const sinPhi2 = Math.sin(g2.tiltAngle);
+    const cosPhiSombrero = Math.cos(g2.tiltAngle);
+    const sinPhiSombrero = Math.sin(g2.tiltAngle);
 
     // Helper to spawn a dynamic comet
     const spawnComet = () => {
       const isGrandComet = Math.random() < 0.25;
-      const startX = Math.random() * (width * 0.8) + width * 0.2;
-      const startY = Math.random() * (height * 0.65) + 40;
+      const startX = Math.random() * (width * 0.85) + width * 0.15;
+      const startY = Math.random() * (height * 0.65) + 30;
       const speed = isGrandComet ? Math.random() * 4 + 5 : Math.random() * 7 + 8;
-      const angle = (Math.random() * 0.25 + 0.52); // ~ 30° to 45° angle
+      const angle = (Math.random() * 0.25 + 0.52);
 
       comets.push({
         x: startX,
@@ -264,20 +265,44 @@ export function CelestialSky() {
       ctx.fill();
 
       // ------------------------------------------
-      // 2. Draw Galaxy 2 Barred Spiral Core Glow
+      // 2. Draw Sombrero Galaxy (M104) Blazing Nuclear Bulge & Disk
       // ------------------------------------------
-      const coreR2 = g2.maxRadius * 0.60;
-      const coreGrad2 = ctx.createRadialGradient(c2.x, c2.y, 0, c2.x, c2.y, coreR2);
-      coreGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.42)');
-      coreGrad2.addColorStop(0.18, 'rgba(230, 238, 252, 0.20)');
-      coreGrad2.addColorStop(0.45, 'rgba(180, 195, 220, 0.07)');
-      coreGrad2.addColorStop(0.80, 'rgba(130, 145, 170, 0.015)');
-      coreGrad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.save();
+      ctx.translate(c2.x, c2.y);
+      ctx.rotate(g2.tiltAngle);
 
-      ctx.fillStyle = coreGrad2;
+      // Blazing central vertical elliptical bulge glow
+      const bulgeGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, g2.bulgeRadiusX);
+      bulgeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.65)');
+      bulgeGrad.addColorStop(0.18, 'rgba(240, 245, 255, 0.35)');
+      bulgeGrad.addColorStop(0.45, 'rgba(190, 205, 230, 0.12)');
+      bulgeGrad.addColorStop(0.85, 'rgba(130, 145, 175, 0.02)');
+      bulgeGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.fillStyle = bulgeGrad;
       ctx.beginPath();
-      ctx.arc(c2.x, c2.y, coreR2, 0, Math.PI * 2);
+      ctx.scale(1.0, g2.bulgeRadiusY / g2.bulgeRadiusX);
+      ctx.arc(0, 0, g2.bulgeRadiusX, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
+
+      // Sombrero Outer Disk Glowing Rim (Luminous Razor-Thin Base)
+      ctx.save();
+      ctx.translate(c2.x, c2.y);
+      ctx.rotate(g2.tiltAngle);
+      const diskGrad = ctx.createLinearGradient(-g2.diskRadius, 0, g2.diskRadius, 0);
+      diskGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      diskGrad.addColorStop(0.2, 'rgba(220, 230, 250, 0.25)');
+      diskGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.7)');
+      diskGrad.addColorStop(0.8, 'rgba(220, 230, 250, 0.25)');
+      diskGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+      ctx.strokeStyle = diskGrad;
+      ctx.lineWidth = 2.0;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, g2.diskRadius * 0.96, g2.diskRadius * g2.tiltRatio, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
 
       // ------------------------------------------
       // 3. Draw Galaxy 3 Globular Core Glow
@@ -310,8 +335,10 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 5. Render Live Orbiting Galaxy Particles
+      // 5. Render Live Orbiting Particles (Galaxy 1, Sombrero Background, Galaxy 3)
       // ------------------------------------------
+      const sombreroForeground = [];
+
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         p.theta += p.speed;
@@ -327,14 +354,23 @@ export function CelestialSky() {
 
           const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
           alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
-        } else if (p.type === 'galaxy2') {
+        } else if (p.type === 'sombrero') {
+          // Sombrero Edge-On Coordinates
           const xp = p.r * Math.cos(p.theta);
-          const yp = p.r * Math.sin(p.theta) * g2.tiltRatio;
-          px = c2.x + (xp * cosPhi2 - yp * sinPhi2);
-          py = c2.y + (xp * sinPhi2 + yp * cosPhi2);
+          const yTilt = p.isBulge ? (g2.bulgeRadiusY / g2.bulgeRadiusX) : g2.tiltRatio;
+          const yp = p.r * Math.sin(p.theta) * yTilt;
 
-          const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
+          px = c2.x + (xp * cosPhiSombrero - yp * sinPhiSombrero);
+          py = c2.y + (xp * sinPhiSombrero + yp * cosPhiSombrero);
+
+          const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.25 + 0.75;
           alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
+
+          // If in the foreground (below the disk midline), draw after the dark dust lane!
+          if (yp > 0) {
+            sombreroForeground.push({ px, py, size: p.size, alpha, isSilver: p.isSilver });
+            continue;
+          }
         } else if (p.type === 'galaxy3') {
           px = c3.x + p.r * Math.cos(p.theta);
           py = c3.y + p.r * Math.sin(p.theta) * 0.85;
@@ -365,10 +401,43 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 6. Active Multi-Comet System (Frequent & Luminous)
+      // 6. Draw Sombrero Iconic Dark Dust Lane (Silhouette Absorption)
       // ------------------------------------------
-      // Spawn new comets frequently (up to 4 simultaneous comets)
-      if (Math.random() < 0.022 && comets.length < 4) {
+      ctx.save();
+      ctx.translate(c2.x, c2.y);
+      ctx.rotate(g2.tiltAngle);
+
+      // Dark dust lane slicing right through the lower-center of the bright core
+      ctx.beginPath();
+      ctx.ellipse(0, 3.5, g2.diskRadius * 0.94, g2.diskRadius * g2.tiltRatio * 0.55, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(7, 7, 8, 0.94)';
+      ctx.lineWidth = 4.8;
+      ctx.stroke();
+
+      // Secondary fine interstellar dust filament
+      ctx.beginPath();
+      ctx.ellipse(0, 5.5, g2.diskRadius * 0.85, g2.diskRadius * g2.tiltRatio * 0.40, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(9, 9, 11, 0.75)';
+      ctx.lineWidth = 2.4;
+      ctx.stroke();
+      ctx.restore();
+
+      // ------------------------------------------
+      // 7. Render Sombrero Foreground Starlight Rim
+      // ------------------------------------------
+      for (let i = 0; i < sombreroForeground.length; i++) {
+        const fp = sombreroForeground[i];
+        ctx.globalAlpha = fp.alpha;
+        ctx.fillStyle = fp.isSilver ? '#e4ebf5' : '#ffffff';
+        ctx.beginPath();
+        ctx.arc(fp.px, fp.py, fp.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // ------------------------------------------
+      // 8. Active Multi-Comet System (Frequent & Luminous)
+      // ------------------------------------------
+      if (Math.random() < 0.024 && comets.length < 4) {
         spawnComet();
       }
 
