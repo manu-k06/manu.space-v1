@@ -4,9 +4,10 @@ import React, { useEffect, useRef } from 'react';
  * CelestialSky Component (Live Procedural Deep Space Cosmos)
  * 
  * Features:
- * 1. Galaxy 1 (Upper Right): Grand Face-On Spiral Galaxy with differential Keplerian rotation.
- * 2. Galaxy 2 (Mid Right): Edge-On "Sombrero" Galaxy (Messier 104) with a blazing vertical core
- *    and a razor-sharp horizontal disk bisected by a dramatic dark silhouette dust lane.
+ * 1. Galaxy 1 (Upper Right): Grand Spiral Galaxy with differential Keplerian rotation.
+ * 2. Object 2 (Mid Right): Cosmic Planetary Nebula (NGC 7293 Helix / "Eye of the Cosmos")
+ *    with an intense central white dwarf star, luminous filamentary gas shells,
+ *    and organic breathing pulsation.
  * 3. Galaxy 3 (Lower Left): Globular Satellite Cluster adding depth to the lower mountain pass.
  * 4. Rich Multi-Comet System: Frequent, simultaneous shooting stars & grand comets
  *    with glowing nucleus cores and long sweeping ion dust tails.
@@ -48,18 +49,17 @@ export function CelestialSky() {
       baseSpeed: 0.00065,
     };
 
-    // Galaxy 2: Edge-On Sombrero Galaxy (Messier 104, Mid-Right Pass)
-    const g2 = {
+    // Object 2: Cosmic Planetary Nebula (Helix "Eye of the Cosmos", Mid-Right Pass)
+    const nebula = {
       getCenter: (w, h) => ({
         x: w > 900 ? w * 0.82 : w * 0.78,
         y: Math.min(Math.max(h * 0.46, 800), 1250),
       }),
-      diskRadius: 280,   // Wide horizontal span
-      tiltRatio: 0.13,    // Razor-thin edge-on aspect ratio
-      tiltAngle: -0.14,   // Slight cinematic slant (~ -8 degrees)
-      bulgeRadiusX: 105,  // Broad nuclear bulge
-      bulgeRadiusY: 62,   // Vertical bulge extension
-      baseSpeed: 0.00075,
+      radiusX: 140, // Outer shell major axis
+      radiusY: 108, // Outer shell minor axis
+      innerCavityRatio: 0.52, // Dark inner "pupil" cavity
+      tiltAngle: 0.38, // Angled oval orientation (~22 degrees)
+      breatheSpeed: 0.012,
     };
 
     // Galaxy 3: Globular Satellite Cluster (Lower Left)
@@ -79,9 +79,8 @@ export function CelestialSky() {
 
       // Calculate responsive dimensions
       g1.maxRadius = Math.min(Math.max(w * 0.32, 240), 380);
-      g2.diskRadius = Math.min(Math.max(w * 0.28, 200), 320);
-      g2.bulgeRadiusX = g2.diskRadius * 0.38;
-      g2.bulgeRadiusY = g2.diskRadius * 0.22;
+      nebula.radiusX = Math.min(Math.max(w * 0.16, 120), 165);
+      nebula.radiusY = nebula.radiusX * 0.78;
       g3.maxRadius = Math.min(Math.max(w * 0.18, 140), 220);
 
       // ------------------------------------------
@@ -119,35 +118,36 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 2. Generate Galaxy 2 Edge-On Sombrero Particles (520 particles)
+      // 2. Generate Planetary Nebula Gas Filament Particles (520 particles)
       // ------------------------------------------
-      const numG2 = w > 900 ? 520 : 320;
-      for (let i = 0; i < numG2; i++) {
-        const isBulge = Math.random() < 0.32;
-        let r, theta;
+      const numNebula = w > 900 ? 520 : 320;
+      for (let i = 0; i < numNebula; i++) {
+        const isRing = Math.random() < 0.75;
+        let rNorm, theta, driftSpeed;
 
-        if (isBulge) {
-          // Central spherical/elliptical stellar halo
-          r = Math.pow(Math.random(), 1.6) * g2.bulgeRadiusX;
+        if (isRing) {
+          // Dense luminous emission shell ("Iris")
+          rNorm = nebula.innerCavityRatio + Math.pow(Math.random(), 0.85) * (1.0 - nebula.innerCavityRatio);
           theta = Math.random() * Math.PI * 2;
+          driftSpeed = (Math.random() - 0.5) * 0.0003;
         } else {
-          // Razor-thin luminous outer disk rim
-          r = g2.bulgeRadiusX * 0.75 + Math.pow(Math.random(), 1.2) * (g2.diskRadius - g2.bulgeRadiusX * 0.75);
+          // Radial cometary knots & outer faint halo
+          rNorm = 0.9 + Math.pow(Math.random(), 1.4) * 0.45;
           theta = Math.random() * Math.PI * 2;
+          driftSpeed = (Math.random() - 0.5) * 0.0002;
         }
 
         particles.push({
-          type: 'sombrero',
-          isBulge,
-          r,
+          type: 'nebula',
+          isRing,
+          rNorm,
           theta,
-          speed: (0.14 / (Math.sqrt(r) + 4)) * g2.baseSpeed * 280,
-          size: Math.random() < 0.10 ? 1.8 + Math.random() * 0.8 : 0.7 + Math.random() * 0.75,
-          baseAlpha: isBulge ? Math.random() * 0.65 + 0.35 : Math.random() * 0.75 + 0.25,
-          twinkleSpeed: 0.014 + Math.random() * 0.025,
-          twinklePhase: Math.random() * Math.PI * 2,
-          isProminent: Math.random() < 0.03,
-          isSilver: Math.random() < 0.3,
+          speed: driftSpeed,
+          size: Math.random() < 0.12 ? 2.2 + Math.random() * 0.8 : 0.8 + Math.random() * 0.9,
+          baseAlpha: isRing ? Math.random() * 0.65 + 0.35 : Math.random() * 0.35 + 0.15,
+          pulseSpeed: 0.01 + Math.random() * 0.02,
+          pulsePhase: Math.random() * Math.PI * 2,
+          isSilver: Math.random() < 0.45,
         });
       }
 
@@ -216,8 +216,8 @@ export function CelestialSky() {
     const cosPhi1 = Math.cos(g1.tiltAngle);
     const sinPhi1 = Math.sin(g1.tiltAngle);
 
-    const cosPhiSombrero = Math.cos(g2.tiltAngle);
-    const sinPhiSombrero = Math.sin(g2.tiltAngle);
+    const cosPhiNebula = Math.cos(nebula.tiltAngle);
+    const sinPhiNebula = Math.sin(nebula.tiltAngle);
 
     // Helper to spawn a dynamic comet
     const spawnComet = () => {
@@ -245,8 +245,11 @@ export function CelestialSky() {
       ctx.clearRect(0, 0, width, height);
 
       const c1 = g1.getCenter(width, height);
-      const c2 = g2.getCenter(width, height);
+      const cNebula = nebula.getCenter(width, height);
       const c3 = g3.getCenter(width, height);
+
+      // Living breathing pulsation factor for the nebula
+      const breathe = Math.sin(time * nebula.breatheSpeed) * 0.06 + 1.0;
 
       // ------------------------------------------
       // 1. Draw Galaxy 1 Spiral Galactic Core Glow
@@ -265,42 +268,63 @@ export function CelestialSky() {
       ctx.fill();
 
       // ------------------------------------------
-      // 2. Draw Sombrero Galaxy (M104) Blazing Nuclear Bulge & Disk
+      // 2. Draw Planetary Nebula ("Eye of the Cosmos") Gas Shells & Caverns
       // ------------------------------------------
       ctx.save();
-      ctx.translate(c2.x, c2.y);
-      ctx.rotate(g2.tiltAngle);
+      ctx.translate(cNebula.x, cNebula.y);
+      ctx.rotate(nebula.tiltAngle);
 
-      // Blazing central vertical elliptical bulge glow
-      const bulgeGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, g2.bulgeRadiusX);
-      bulgeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.65)');
-      bulgeGrad.addColorStop(0.18, 'rgba(240, 245, 255, 0.35)');
-      bulgeGrad.addColorStop(0.45, 'rgba(190, 205, 230, 0.12)');
-      bulgeGrad.addColorStop(0.85, 'rgba(130, 145, 175, 0.02)');
-      bulgeGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      const curRx = nebula.radiusX * breathe;
+      const curRy = nebula.radiusY * breathe;
 
-      ctx.fillStyle = bulgeGrad;
+      // Outer Translucent Gaseous Shroud
+      const outerGrad = ctx.createRadialGradient(0, 0, curRx * 0.4, 0, 0, curRx * 1.35);
+      outerGrad.addColorStop(0, 'rgba(235, 240, 255, 0.12)');
+      outerGrad.addColorStop(0.4, 'rgba(200, 215, 240, 0.22)');
+      outerGrad.addColorStop(0.75, 'rgba(150, 170, 210, 0.08)');
+      outerGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.fillStyle = outerGrad;
       ctx.beginPath();
-      ctx.scale(1.0, g2.bulgeRadiusY / g2.bulgeRadiusX);
-      ctx.arc(0, 0, g2.bulgeRadiusX, 0, Math.PI * 2);
+      ctx.scale(1.0, curRy / curRx);
+      ctx.arc(0, 0, curRx * 1.35, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Dense Luminous Emission Ring ("Iris of the Eye")
+      const ringGrad = ctx.createRadialGradient(0, 0, curRx * nebula.innerCavityRatio, 0, 0, curRx * 1.05);
+      ringGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      ringGrad.addColorStop(0.35, 'rgba(255, 255, 255, 0.38)');
+      ringGrad.addColorStop(0.70, 'rgba(220, 235, 255, 0.45)');
+      ringGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.fillStyle = ringGrad;
+      ctx.beginPath();
+      ctx.arc(0, 0, curRx * 1.05, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
-      // Sombrero Outer Disk Glowing Rim (Luminous Razor-Thin Base)
+      // Central White Dwarf Star (The Heart of the Nebula)
       ctx.save();
-      ctx.translate(c2.x, c2.y);
-      ctx.rotate(g2.tiltAngle);
-      const diskGrad = ctx.createLinearGradient(-g2.diskRadius, 0, g2.diskRadius, 0);
-      diskGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-      diskGrad.addColorStop(0.2, 'rgba(220, 230, 250, 0.25)');
-      diskGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.7)');
-      diskGrad.addColorStop(0.8, 'rgba(220, 230, 250, 0.25)');
-      diskGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      const wdGrad = ctx.createRadialGradient(cNebula.x, cNebula.y, 0, cNebula.x, cNebula.y, 22);
+      wdGrad.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+      wdGrad.addColorStop(0.25, 'rgba(230, 240, 255, 0.7)');
+      wdGrad.addColorStop(0.65, 'rgba(180, 205, 240, 0.18)');
+      wdGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
-      ctx.strokeStyle = diskGrad;
-      ctx.lineWidth = 2.0;
+      ctx.fillStyle = wdGrad;
       ctx.beginPath();
-      ctx.ellipse(0, 0, g2.diskRadius * 0.96, g2.diskRadius * g2.tiltRatio, 0, 0, Math.PI * 2);
+      ctx.arc(cNebula.x, cNebula.y, 22, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 4-point telescope diffraction cross on the central white dwarf
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.lineWidth = 1.0;
+      const wdCross = 16;
+      ctx.beginPath();
+      ctx.moveTo(cNebula.x - wdCross, cNebula.y);
+      ctx.lineTo(cNebula.x + wdCross, cNebula.y);
+      ctx.moveTo(cNebula.x, cNebula.y - wdCross);
+      ctx.lineTo(cNebula.x, cNebula.y + wdCross);
       ctx.stroke();
       ctx.restore();
 
@@ -335,10 +359,8 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 5. Render Live Orbiting Particles (Galaxy 1, Sombrero Background, Galaxy 3)
+      // 5. Render Live Orbiting Particles (Galaxy 1, Nebula Filaments, Galaxy 3)
       // ------------------------------------------
-      const sombreroForeground = [];
-
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         p.theta += p.speed;
@@ -354,23 +376,17 @@ export function CelestialSky() {
 
           const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
           alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
-        } else if (p.type === 'sombrero') {
-          // Sombrero Edge-On Coordinates
-          const xp = p.r * Math.cos(p.theta);
-          const yTilt = p.isBulge ? (g2.bulgeRadiusY / g2.bulgeRadiusX) : g2.tiltRatio;
-          const yp = p.r * Math.sin(p.theta) * yTilt;
+        } else if (p.type === 'nebula') {
+          // Nebula breathing filaments
+          const rCur = p.rNorm * curRx;
+          const xp = rCur * Math.cos(p.theta);
+          const yp = rCur * Math.sin(p.theta) * (curRy / curRx);
 
-          px = c2.x + (xp * cosPhiSombrero - yp * sinPhiSombrero);
-          py = c2.y + (xp * sinPhiSombrero + yp * cosPhiSombrero);
+          px = cNebula.x + (xp * cosPhiNebula - yp * sinPhiNebula);
+          py = cNebula.y + (xp * sinPhiNebula + yp * cosPhiNebula);
 
-          const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.25 + 0.75;
-          alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
-
-          // If in the foreground (below the disk midline), draw after the dark dust lane!
-          if (yp > 0) {
-            sombreroForeground.push({ px, py, size: p.size, alpha, isSilver: p.isSilver });
-            continue;
-          }
+          const pulse = Math.sin(time * p.pulseSpeed + p.pulsePhase) * 0.25 + 0.75;
+          alpha = Math.max(0, Math.min(1, p.baseAlpha * pulse));
         } else if (p.type === 'galaxy3') {
           px = c3.x + p.r * Math.cos(p.theta);
           py = c3.y + p.r * Math.sin(p.theta) * 0.85;
@@ -401,41 +417,7 @@ export function CelestialSky() {
       }
 
       // ------------------------------------------
-      // 6. Draw Sombrero Iconic Dark Dust Lane (Silhouette Absorption)
-      // ------------------------------------------
-      ctx.save();
-      ctx.translate(c2.x, c2.y);
-      ctx.rotate(g2.tiltAngle);
-
-      // Dark dust lane slicing right through the lower-center of the bright core
-      ctx.beginPath();
-      ctx.ellipse(0, 3.5, g2.diskRadius * 0.94, g2.diskRadius * g2.tiltRatio * 0.55, 0, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(7, 7, 8, 0.94)';
-      ctx.lineWidth = 4.8;
-      ctx.stroke();
-
-      // Secondary fine interstellar dust filament
-      ctx.beginPath();
-      ctx.ellipse(0, 5.5, g2.diskRadius * 0.85, g2.diskRadius * g2.tiltRatio * 0.40, 0, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(9, 9, 11, 0.75)';
-      ctx.lineWidth = 2.4;
-      ctx.stroke();
-      ctx.restore();
-
-      // ------------------------------------------
-      // 7. Render Sombrero Foreground Starlight Rim
-      // ------------------------------------------
-      for (let i = 0; i < sombreroForeground.length; i++) {
-        const fp = sombreroForeground[i];
-        ctx.globalAlpha = fp.alpha;
-        ctx.fillStyle = fp.isSilver ? '#e4ebf5' : '#ffffff';
-        ctx.beginPath();
-        ctx.arc(fp.px, fp.py, fp.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // ------------------------------------------
-      // 8. Active Multi-Comet System (Frequent & Luminous)
+      // 6. Active Multi-Comet System (Frequent & Luminous)
       // ------------------------------------------
       if (Math.random() < 0.024 && comets.length < 4) {
         spawnComet();
@@ -499,7 +481,7 @@ export function CelestialSky() {
 
   return (
     <div className="celestial-canvas-wrap" aria-hidden="true">
-      {/* 100% Live Procedural Canvas Deep Space (Galaxies & Comets) */}
+      {/* 100% Live Procedural Canvas Deep Space (Galaxy + Planetary Nebula + Comets) */}
       <canvas ref={canvasRef} className="live-galaxy-canvas" />
 
       {/* Atmospheric Cosmic Backdrop Vignettes */}
