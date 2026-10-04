@@ -26,7 +26,8 @@
     linear-gradient(180deg, rgba(14, 14, 14, 0.98) 0%, rgba(10, 10, 10, 1) 100%);
 }
 
-/* Live Procedural Galaxy Canvas (100% Code, Physics & 60 FPS) */
+/* Three.js WebGL 3D Canvas Layer */
+.three-webgl-canvas,
 .live-galaxy-canvas {
   position: absolute;
   top: 0;
@@ -35,6 +36,13 @@
   height: 100%;
   pointer-events: none;
   z-index: 1;
+}
+
+.three-webgl-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  pointer-events: none;
 }
 
 /* Living Breathing Nebula Auroras (Silver & Monochrome) */
