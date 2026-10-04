@@ -1,36 +1,72 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { journeyMilestones } from '../data/journeyData';
-import { TimelineItem } from '../components/TimelineItem';
+import { MountainRoad } from '../components/MountainRoad';
+import { MilestoneCard } from '../components/MilestoneCard';
+import '../styles/journey.css';
 
 /**
- * Journey Page Component.
+ * Journey Page Component (Mountain Switchback Pass).
  * 
- * Demonstrates:
- * 1. Rendering Lists with .map()
- * 2. The `key` prop requirement in React to track element identity efficiently.
+ * Features:
+ * - Authentic mountain road with realistic hairpin switchbacks, stone curbs & dashed stripes.
+ * - Dynamic scroll-tracking starlight beacon traveling along the curves.
+ * - Responsive alternating frosted glass milestone cards with project chips and altitude metrics.
  */
 export function Journey() {
-  return (
-    <section className="section">
-      <div className="container">
+  const [activeStep, setActiveStep] = useState(null);
 
-        <div className="fade-in">
-          <span className="label">Journey</span>
-          <h2 style={{ margin: 'var(--space-sm) 0 var(--space-xl)' }}>
-            A steady exposure.
+  // Layout assignment for alternating switchback bends
+  const getRowClass = (index) => {
+    if (index === 4) return 'milestone-row--summit';
+    return index % 2 === 0 ? 'milestone-row--left' : 'milestone-row--right';
+  };
+
+  return (
+    <section className="section journey-section">
+      {/* Atmospheric celestial gradient */}
+      <div className="journey-backdrop" />
+
+      <div className="container">
+        {/* Header */}
+        <div className="journey-header fade-in">
+          <div className="journey-meta-badge">
+            <span className="journey-pulse-dot" />
+            <span>The Switchback Expedition</span>
+          </div>
+          <h2 style={{ margin: 'var(--space-xs) 0 var(--space-sm)' }}>
+            The Mountain Pass.
           </h2>
+          <p style={{ maxWidth: '64ch', color: 'var(--text-secondary)' }}>
+            A continuous ascent through hairpin turns, fundamental detours, and rapid shipping — 
+            climbing from base camp toward high alpine systems engineering.
+          </p>
         </div>
 
-        <ul className="timeline fade-in">
-          {journeyMilestones.map((milestone) => (
-            <TimelineItem
-              key={milestone.id}
-              date={milestone.date}
-              title={milestone.title}
-              description={milestone.description}
-            />
-          ))}
-        </ul>
+        {/* Mountain Switchback Roadmap Area */}
+        <div className="mountain-roadmap-wrap">
+          {/* Authentic Switchback Road SVG with Scroll-Driven Traveler Beacon */}
+          <MountainRoad
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+          />
+
+          {/* Milestone Cards Flow along the Switchback Bends */}
+          <div className="milestones-flow">
+            {journeyMilestones.map((milestone, index) => (
+              <div
+                key={milestone.id}
+                className={`milestone-row ${getRowClass(index)} fade-in`}
+              >
+                <MilestoneCard
+                  milestone={milestone}
+                  isActive={activeStep === milestone.step}
+                  onMouseEnter={() => setActiveStep(milestone.step)}
+                  onMouseLeave={() => setActiveStep(null)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
