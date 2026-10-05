@@ -225,7 +225,8 @@
 .mountain-roadmap-wrap {
   position: relative;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1000px;
+  height: 2400px;
   margin: 0 auto;
   z-index: 2;
 }
@@ -239,6 +240,11 @@
   height: 100%;
   pointer-events: none;
   z-index: 1;
+}
+
+.switchback-svg-canvas .waypoint-group {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 /* Road Path SVG Styles */
@@ -349,46 +355,59 @@
 
 /* Milestone Cards Container */
 .milestones-flow {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 8rem;
-  padding: 2rem 0 6rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
   z-index: 4;
 }
 
 /* Individual Milestone Row */
 .milestone-row {
-  display: flex;
-  width: 100%;
-  position: relative;
+  position: absolute;
+  pointer-events: auto;
   z-index: 5;
+  width: auto;
 }
 
-/* Left rows sit on the left flank */
-.milestone-row--left {
-  justify-content: flex-start;
-  padding-right: 48%;
+/* Milestone 01: Next to Checkpoint 01 (x: 220, y: 440) on inner curve shoulder */
+.milestone-row--01 {
+  top: 420px;
+  left: 320px;
 }
 
-/* Right rows sit on the right flank */
-.milestone-row--right {
-  justify-content: flex-end;
-  padding-left: 48%;
+/* Milestone 02: Next to Checkpoint 02 (x: 780, y: 960) on right mountain flank */
+.milestone-row--02 {
+  top: 1090px;
+  right: 10px;
 }
 
-/* Summit row centered under the summit peak */
-.milestone-row--summit {
-  justify-content: center;
-  padding: 0 12%;
-  margin-top: 1rem;
+/* Milestone 03: Next to Checkpoint 03 (x: 220, y: 1500) on left mountain flank */
+.milestone-row--03 {
+  top: 1600px;
+  left: 10px;
+}
+
+/* Milestone 04: Next to Checkpoint 04 (x: 760, y: 1980) on right mountain flank */
+.milestone-row--04 {
+  top: 2080px;
+  right: 10px;
+}
+
+/* Milestone 05: Directly centered below Summit Peak Checkpoint 05 (x: 500, y: 2320) */
+.milestone-row--05 {
+  top: 2360px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* Milestone Frosted Glass Card (Compact, Refined, Non-Bulky) */
 .mountain-card {
   position: relative;
-  width: 100%;
-  max-width: 360px;
+  width: 320px;
+  max-width: 320px;
   background: rgba(18, 17, 16, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -403,18 +422,20 @@
   z-index: 5;
 }
 
-.mountain-card:hover {
-  background: rgba(24, 23, 22, 0.98);
-  border-color: rgba(196, 181, 164, 0.35);
+.mountain-card:hover,
+.mountain-card--active {
+  background: rgba(26, 24, 22, 0.98);
+  border-color: rgba(255, 255, 255, 0.85);
   transform: translateY(-3px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 18px rgba(196, 181, 164, 0.08);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(196, 181, 164, 0.2);
 }
 
 .mountain-card--summit {
   border-color: rgba(196, 181, 164, 0.28);
   background: rgba(22, 20, 18, 0.96);
   text-align: center;
-  max-width: 360px;
+  width: 330px;
+  max-width: 330px;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 24px rgba(196, 181, 164, 0.1);
 }
 
@@ -552,16 +573,38 @@
    RESPONSIVENESS (Tablets & Mobile)
    ============================================ */
 @media (max-width: 900px) {
+  .mountain-roadmap-wrap {
+    height: auto;
+  }
+
   .switchback-svg-canvas {
     display: none;
   }
 
   .milestones-flow {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: auto;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
     gap: 2.5rem;
     padding: 1rem 0;
     border-left: 2px dashed rgba(196, 181, 164, 0.25);
     margin-left: 0.8rem;
     padding-left: 1.5rem;
+  }
+
+  .milestone-row {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    width: 100%;
+    display: flex;
   }
 
   .milestone-row--left,
@@ -572,12 +615,14 @@
   }
 
   .mountain-card {
+    width: 100%;
     max-width: 100%;
     padding: 1.15rem 1.3rem;
   }
 
   .mountain-card--summit {
     text-align: left;
+    width: 100%;
     max-width: 100%;
   }
 

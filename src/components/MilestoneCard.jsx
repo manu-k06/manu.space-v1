@@ -10,12 +10,9 @@ export function MilestoneCard({ milestone, isActive, onMouseEnter, onMouseLeave 
 
   return (
     <article
-      className={`mountain-card ${isCurrent ? 'mountain-card--summit' : ''}`}
+      className={`mountain-card ${isCurrent ? 'mountain-card--summit' : ''} ${isActive ? 'mountain-card--active' : ''}`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      style={{
-        borderColor: isActive ? 'var(--accent)' : undefined,
-      }}
     >
       {/* Header Row: Year Badge + Category */}
       <div className="card-header-meta">

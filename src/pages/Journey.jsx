@@ -53,7 +53,7 @@ export function Journey() {
             {journeyMilestones.map((milestone, index) => (
               <div
                 key={milestone.id}
-                className={`milestone-row ${getRowClass(index)} fade-in`}
+                className={`milestone-row milestone-row--${milestone.step} ${getRowClass(index)} fade-in`}
               >
                 <MilestoneCard
                   milestone={milestone}
