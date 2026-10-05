@@ -226,7 +226,7 @@
   position: relative;
   width: 100%;
   max-width: 1000px;
-  height: 2400px;
+  height: 2750px;
   margin: 0 auto;
   z-index: 2;
 }
@@ -237,7 +237,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 2400px;
   pointer-events: none;
   z-index: 1;
 }
@@ -392,13 +392,13 @@
 
 /* Milestone 04: Next to Checkpoint 04 (x: 760, y: 1980) on right mountain flank */
 .milestone-row--04 {
-  top: 2080px;
-  right: 10px;
+  top: 2060px;
+  right: 15px;
 }
 
 /* Milestone 05: Directly centered below Summit Peak Checkpoint 05 (x: 500, y: 2320) */
 .milestone-row--05 {
-  top: 2360px;
+  top: 2440px;
   left: 50%;
   transform: translateX(-50%);
 }
