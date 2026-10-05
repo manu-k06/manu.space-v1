@@ -5,14 +5,26 @@ import React, { useRef, useEffect } from 'react';
  * 
  * Renders an authentic mountain switchback pass with realistic curves,
  * stone curbs, asphalt roadbed, animated centerline dashes, a luminous
- * traveled road illumination trail, and an ultra-smooth 60/120 FPS
- * RAF-interpolated starlight beacon with zero React re-render overhead.
+ * traveled road illumination trail, and an interactive 60/120 FPS
+ * RAF-interpolated starlight beacon.
+ * 
+ * Interactive behavior:
+ * - On scroll: beacon smoothly glides down the mountain pass.
+ * - On hover (checkpoint node or milestone card): beacon smoothly glides
+ *   directly to the hovered checkpoint along the road curve.
+ * - On mouse leave: beacon smoothly glides back to scroll position.
  */
 export function MountainRoad({ activeStep, setActiveStep }) {
   const svgRef = useRef(null);
   const pathRef = useRef(null);
   const progressPathRef = useRef(null);
   const beaconRef = useRef(null);
+
+  // Keep a ref to activeStep so RAF loop reads it without re-mounting
+  const activeStepRef = useRef(activeStep);
+  useEffect(() => {
+    activeStepRef.current = activeStep;
+  }, [activeStep]);
 
   // Switchback Hairpin Waypoints along the mountain pass
   const waypoints = [
@@ -50,8 +62,26 @@ export function MountainRoad({ activeStep, setActiveStep }) {
       progressPath.style.strokeDashoffset = `${len}`;
     }
 
+    // Pre-calculate exact progress fraction along path for each waypoint
+    const waypointProgressMap = {};
+    const samples = 400;
+    for (const wp of waypoints) {
+      let bestDist = Infinity;
+      let bestT = 0;
+      for (let s = 0; s <= samples; s++) {
+        const t = s / samples;
+        const pt = path.getPointAtLength(t * len);
+        const d = Math.hypot(pt.x - wp.x, pt.y - wp.y);
+        if (d < bestDist) {
+          bestDist = d;
+          bestT = t;
+        }
+      }
+      waypointProgressMap[wp.step] = bestT;
+    }
+
     let currentProgress = 0;
-    let targetProgress = 0;
+    let scrollProgress = 0;
     let animationFrameId;
 
     const handleScroll = () => {
@@ -60,12 +90,22 @@ export function MountainRoad({ activeStep, setActiveStep }) {
       // Start tracking smoothly as the road enters the viewport
       const totalDistance = rect.height - vh * 0.35;
       const scrolled = vh * 0.40 - rect.top;
-      targetProgress = Math.min(Math.max(scrolled / (totalDistance || 1), 0), 1);
+      scrollProgress = Math.min(Math.max(scrolled / (totalDistance || 1), 0), 1);
     };
 
-    // Continuous 60-120 FPS RAF lerp loop: converts discrete scroll notches into buttery smooth motion
+    // Continuous 60-120 FPS RAF lerp loop: converts discrete scroll notches & hover jumps into buttery smooth motion
     const animate = () => {
-      currentProgress += (targetProgress - currentProgress) * 0.085;
+      // If hovering over a milestone or waypoint, prioritize gliding to that checkpoint
+      let targetProgress;
+      const hoveredStep = activeStepRef.current;
+      if (hoveredStep && waypointProgressMap[hoveredStep] !== undefined) {
+        targetProgress = waypointProgressMap[hoveredStep];
+      } else {
+        targetProgress = scrollProgress;
+      }
+
+      const lerpSpeed = hoveredStep ? 0.095 : 0.085;
+      currentProgress += (targetProgress - currentProgress) * lerpSpeed;
 
       const point = path.getPointAtLength(currentProgress * len);
       beacon.setAttribute('transform', `translate(${point.x.toFixed(2)}, ${point.y.toFixed(2)})`);
@@ -133,22 +173,24 @@ export function MountainRoad({ activeStep, setActiveStep }) {
         return (
           <g
             key={wp.step}
-            className="waypoint-group"
+            className={`waypoint-group ${isActive ? 'waypoint-group--active' : ''}`}
             onClick={() => setActiveStep && setActiveStep(wp.step)}
+            onMouseEnter={() => setActiveStep && setActiveStep(wp.step)}
+            onMouseLeave={() => setActiveStep && setActiveStep(null)}
             style={{ cursor: 'pointer' }}
           >
             {/* Pulsing halo */}
             <circle
               cx={wp.x}
               cy={wp.y}
-              r={isActive ? 28 : 22}
+              r={isActive ? 30 : 22}
               className="waypoint-node-ring"
             />
             {/* Core disk */}
             <circle
               cx={wp.x}
               cy={wp.y}
-              r="14"
+              r={isActive ? 16 : 14}
               className="waypoint-node-disk"
               style={{
                 stroke: isActive ? '#ffffff' : 'var(--accent)',

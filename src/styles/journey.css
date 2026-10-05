@@ -297,12 +297,28 @@
 }
 
 /* Waypoint SVG Node */
+.waypoint-group {
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.4, 1);
+}
+
+.waypoint-group:hover,
+.waypoint-group--active {
+  transform-origin: center;
+}
+
 .waypoint-node-ring {
   fill: none;
   stroke: rgba(196, 181, 164, 0.35);
   stroke-width: 2px;
   animation: pulseBeaconRing 2.4s ease-out infinite;
   transform-origin: center;
+  transition: r 0.25s ease, stroke 0.25s ease;
+}
+
+.waypoint-group:hover .waypoint-node-ring,
+.waypoint-group--active .waypoint-node-ring {
+  stroke: rgba(255, 255, 255, 0.90);
+  animation-duration: 1.2s;
 }
 
 .waypoint-node-disk {
@@ -310,6 +326,14 @@
   stroke: var(--accent);
   stroke-width: 2px;
   filter: drop-shadow(0 0 8px rgba(196, 181, 164, 0.3));
+  transition: r 0.25s ease, fill 0.25s ease, stroke 0.25s ease, filter 0.25s ease;
+}
+
+.waypoint-group:hover .waypoint-node-disk,
+.waypoint-group--active .waypoint-node-disk {
+  stroke: #ffffff;
+  fill: var(--accent);
+  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 28px rgba(196, 181, 164, 0.5));
 }
 
 .waypoint-node-number {
@@ -320,6 +344,7 @@
   fill: #ffffff;
   text-anchor: middle;
   dominant-baseline: central;
+  transition: fill 0.2s ease;
 }
 
 /* Milestone Cards Container */
