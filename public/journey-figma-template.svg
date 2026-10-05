@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 2750" width="1000" height="2750" style="background:#0c0b0a;">
+  <!-- Dark Mountain Canvas -->
+  <rect width="1000" height="2750" fill="#0c0b0a" />
+
+  <!-- Road Layer (Locked Reference) -->
+  <g id="Road_Layer_Locked">
+    <path d="M 500,40 C 520,130 680,190 670,300 C 650,410 320,330 220,440 C 130,540 210,680 460,750 C 710,810 860,830 780,960 C 710,1080 470,1130 320,1250 C 170,1350 130,1430 220,1500 C 300,1580 620,1650 760,1780 C 850,1880 840,1950 760,1980 C 640,2050 510,2120 500,2320" stroke="#3c3834" stroke-width="42" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.6" />
+    <path d="M 500,40 C 520,130 680,190 670,300 C 650,410 320,330 220,440 C 130,540 210,680 460,750 C 710,810 860,830 780,960 C 710,1080 470,1130 320,1250 C 170,1350 130,1430 220,1500 C 300,1580 620,1650 760,1780 C 850,1880 840,1950 760,1980 C 640,2050 510,2120 500,2320" stroke="#161514" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    <path d="M 500,40 C 520,130 680,190 670,300 C 650,410 320,330 220,440 C 130,540 210,680 460,750 C 710,810 860,830 780,960 C 710,1080 470,1130 320,1250 C 170,1350 130,1430 220,1500 C 300,1580 620,1650 760,1780 C 850,1880 840,1950 760,1980 C 640,2050 510,2120 500,2320" stroke="#dcd8d4" stroke-width="2.5" stroke-dasharray="12 16" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.75" />
+  </g>
+
+  <!-- Waypoint Checkpoints -->
+  <g id="Checkpoints_Locked">
+    <g id="WP_01_Base_Camp">
+      <circle cx="220" cy="440" r="26" fill="none" stroke="#c4b5a4" stroke-width="2" opacity="0.4" />
+      <circle cx="220" cy="440" r="15" fill="#141414" stroke="#c4b5a4" stroke-width="2" />
+      <text x="220" y="441" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">01</text>
+    </g>
+    <g id="WP_02_Launchpad">
+      <circle cx="780" cy="960" r="26" fill="none" stroke="#c4b5a4" stroke-width="2" opacity="0.4" />
+      <circle cx="780" cy="960" r="15" fill="#141414" stroke="#c4b5a4" stroke-width="2" />
+      <text x="780" y="961" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">02</text>
+    </g>
+    <g id="WP_03_First_Orbit">
+      <circle cx="220" cy="1500" r="26" fill="none" stroke="#c4b5a4" stroke-width="2" opacity="0.4" />
+      <circle cx="220" cy="1500" r="15" fill="#141414" stroke="#c4b5a4" stroke-width="2" />
+      <text x="220" y="1501" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">03</text>
+    </g>
+    <g id="WP_04_Alpine_Ridge">
+      <circle cx="760" cy="1980" r="26" fill="none" stroke="#c4b5a4" stroke-width="2" opacity="0.4" />
+      <circle cx="760" cy="1980" r="15" fill="#141414" stroke="#c4b5a4" stroke-width="2" />
+      <text x="760" y="1981" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">04</text>
+    </g>
+    <g id="WP_05_Summit_Peak">
+      <circle cx="500" cy="2320" r="26" fill="none" stroke="#c4b5a4" stroke-width="2" opacity="0.4" />
+      <circle cx="500" cy="2320" r="15" fill="#141414" stroke="#c4b5a4" stroke-width="2" />
+      <text x="500" y="2321" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="central">05</text>
+    </g>
+  </g>
+
+  <!-- Moveable Milestone Cards (Select & Drag in Figma) -->
+  <g id="Milestone_Cards_Draggable">
+    <!-- Card 01 -->
+    <g id="Card_01_The_Detour" transform="translate(320, 420)">
+      <rect width="320" height="210" rx="6" fill="#181615" stroke="#c4b5a4" stroke-width="1.5" stroke-opacity="0.35" />
+      <rect x="16" y="16" width="80" height="18" rx="3" fill="#c4b5a4" fill-opacity="0.12" stroke="#c4b5a4" stroke-width="1" stroke-opacity="0.25" />
+      <text x="22" y="29" fill="#c4b5a4" font-family="sans-serif" font-size="9" font-weight="bold">01 • 2024</text>
+      <text x="108" y="29" fill="#888888" font-family="sans-serif" font-size="8.5" font-weight="600" letter-spacing="0.5">FOUNDATIONS &amp; RESILIENCE</text>
+      <text x="16" y="64" fill="#ffffff" font-family="sans-serif" font-size="17" font-weight="bold">The Detour</text>
+      <text x="16" y="92" fill="#aaaaaa" font-family="sans-serif" font-size="11">Chased IIT JEE for a year. The grind built stamina and coding foundations.</text>
+      <rect x="16" y="165" width="80" height="22" rx="3" fill="#252220" stroke="#333" stroke-width="1" />
+      <text x="26" y="180" fill="#999" font-family="sans-serif" font-size="9">Self-Discipline</text>
+      <rect x="104" y="165" width="70" height="22" rx="3" fill="#252220" stroke="#333" stroke-width="1" />
+      <text x="114" y="180" fill="#999" font-family="sans-serif" font-size="9">Algorithms</text>
+    </g>
+
+    <!-- Card 02 -->
+    <g id="Card_02_Touchdown_FISAT" transform="translate(670, 1090)">
+      <rect width="320" height="210" rx="6" fill="#181615" stroke="#c4b5a4" stroke-width="1.5" stroke-opacity="0.35" />
+      <rect x="16" y="16" width="80" height="18" rx="3" fill="#c4b5a4" fill-opacity="0.12" stroke="#c4b5a4" stroke-width="1" stroke-opacity="0.25" />
+      <text x="22" y="29" fill="#c4b5a4" font-family="sans-serif" font-size="9" font-weight="bold">02 • 2025</text>
+      <text x="108" y="29" fill="#888888" font-family="sans-serif" font-size="8.5" font-weight="600" letter-spacing="0.5">CS CORE &amp; FUNDAMENTALS</text>
+      <text x="16" y="64" fill="#ffffff" font-family="sans-serif" font-size="17" font-weight="bold">Touchdown at FISAT</text>
+      <text x="16" y="92" fill="#aaaaaa" font-family="sans-serif" font-size="11">Started B.Tech CS. Mastered C, discrete math, data structures, and Linux.</text>
+      <rect x="16" y="165" width="40" height="22" rx="3" fill="#252220" stroke="#333" stroke-width="1" />
+      <text x="32" y="180" fill="#999" font-family="sans-serif" font-size="9">C</text>
+      <rect x="64" y="165" width="85" height="22" rx="3" fill="#252220" stroke="#333" stroke-width="1" />
+      <text x="74" y="180" fill="#999" font-family="sans-serif" font-size="9">Discrete Math</text>
+    </g>
+
+    <!-- Card 03 -->
+    <g id="Card_03_First_Orbit" transform="translate(10, 1600)">
+      <rect width="320" height="230" rx="6" fill="#181615" stroke="#c4b5a4" stroke-width="1.5" stroke-opacity="0.35" />
+      <rect x="16" y="16" width="115" height="18" rx="3" fill="#c4b5a4" fill-opacity="0.12" stroke="#c4b5a4" stroke-width="1" stroke-opacity="0.25" />
+      <text x="22" y="29" fill="#c4b5a4" font-family="sans-serif" font-size="9" font-weight="bold">03 • EARLY 2026</text>
+      <text x="140" y="29" fill="#888888" font-family="sans-serif" font-size="8.5" font-weight="600" letter-spacing="0.5">HACKFIT 4.0 &amp; HORIZON</text>
+      <text x="16" y="64" fill="#ffffff" font-family="sans-serif" font-size="17" font-weight="bold">First Orbit: Hackathons</text>
+      <text x="16" y="92" fill="#aaaaaa" font-family="sans-serif" font-size="11">Shipped CivicPulse live at Hackfit 4.0. Followed up with PixelForge AI.</text>
+      <rect x="16" y="185" width="80" height="24" rx="3" fill="#c4b5a4" fill-opacity="0.15" stroke="#c4b5a4" stroke-width="1" stroke-opacity="0.3" />
+      <text x="26" y="201" fill="#fff" font-family="sans-serif" font-size="10">CivicPulse ↗</text>
+      <rect x="104" y="185" width="80" height="24" rx="3" fill="#c4b5a4" fill-opacity="0.15" stroke="#c4b5a4" stroke-width="1" stroke-opacity="0.3" />
+      <text x="114" y="201" fill="#fff" font-family="sans-serif" font-size="10">PixelForge ↗</text>
+    </g>
+
+    <!-- Card 04 -->
+    <g id="Card_04_Engines_AI" transform="translate(665, 2060)">
+      <rect width="320" height="290" rx="6" fill="#181615" stroke="#c4b5a4" stroke-width="1.5" stroke-opacity="0.35" />
+      <rect x="16" y="16" width="105" height="18" rx="3" fill="#c4b5a4" fill-opacity="0.12" stroke="#c4b5a4" stroke-width="1" stroke-opacity="0.25" />
+      <text x="22" y="29" fill="#c4b5a4" font-family="sans-serif" font-size="9" font-weight="bold">04 • MID 2026</text>
+      <text x="130" y="29" fill="#888888" font-family="sans-serif" font-size="8.5" font-weight="600" letter-spacing="0.5">DEEP ENGINEERING</text>
+      <text x="16" y="64" fill="#ffffff" font-family="sans-serif" font-size="17" font-weight="bold">Engines &amp; Full-Stack AI</text>
+      <text x="16" y="92" fill="#aaaaaa" font-family="sans-serif" font-size="11">Bone Runner 2D canvas engine, Cineforge Gemini AI, and RAG Chatbot.</text>
+      <rect x="16" y="240" width="85" height="24" rx="3" fill="#c4b5a4" fill-opacity="0.15" stroke="#c4b5a4" stroke-width="1" stroke-opacity="0.3" />
+      <text x="24" y="256" fill="#fff" font-family="sans-serif" font-size="10">Bone Runner ↗</text>
+      <rect x="110" y="240" width="75" height="24" rx="3" fill="#c4b5a4" fill-opacity="0.15" stroke="#c4b5a4" stroke-width="1" stroke-opacity="0.3" />
+      <text x="120" y="256" fill="#fff" font-family="sans-serif" font-size="10">Cineforge ↗</text>
+    </g>
+
+    <!-- Card 05 -->
+    <g id="Card_05_Current_Orbit" transform="translate(335, 2440)">
+      <rect width="330" height="220" rx="6" fill="#181615" stroke="#c4b5a4" stroke-width="1.5" stroke-opacity="0.35" />
+      <rect x="16" y="16" width="125" height="18" rx="3" fill="#c4b5a4" fill-opacity="0.12" stroke="#c4b5a4" stroke-width="1" stroke-opacity="0.25" />
+      <text x="22" y="29" fill="#c4b5a4" font-family="sans-serif" font-size="9" font-weight="bold">05 • NOW &amp; HORIZON</text>
+      <text x="150" y="29" fill="#888888" font-family="sans-serif" font-size="8.5" font-weight="600" letter-spacing="0.5">SEMESTER 2 &amp; BEYOND</text>
+      <text x="16" y="64" fill="#ffffff" font-family="sans-serif" font-size="17" font-weight="bold">Current Orbit</text>
+      <text x="16" y="92" fill="#aaaaaa" font-family="sans-serif" font-size="11">Accelerating through Semester 2, GATE CS prep, distributed systems &amp; autonomous AI.</text>
+    </g>
+  </g>
+</svg>
