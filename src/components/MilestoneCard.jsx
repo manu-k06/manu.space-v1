@@ -1,15 +1,28 @@
 import React from 'react';
+import { ArrowIcon } from './ArrowIcon';
 
 /**
  * MilestoneCard Component
- * 
+ *
  * Sleek, compact checkpoint card along the roadmap.
  */
-export function MilestoneCard({ milestone, isActive, onMouseEnter, onMouseLeave }) {
+export function MilestoneCard({
+  milestone,
+  isActive,
+  onMouseEnter,
+  onMouseLeave,
+  onFocus,
+  onBlur,
+}) {
   const isCurrent = milestone.isCurrent;
 
   return (
     <article
+      id={`milestone-${milestone.id}`}
+      tabIndex={0}
+      aria-labelledby={`milestone-title-${milestone.id}`}
+      onFocus={onFocus}
+      onBlur={onBlur}
       className={`mountain-card ${isCurrent ? 'mountain-card--summit' : ''} ${isActive ? 'mountain-card--active' : ''}`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -23,7 +36,9 @@ export function MilestoneCard({ milestone, isActive, onMouseEnter, onMouseLeave 
       </div>
 
       {/* Title */}
-      <h3 className="card-title">{milestone.title}</h3>
+      <h2 id={`milestone-title-${milestone.id}`} className="card-title">
+        {milestone.title}
+      </h2>
 
       {/* Narrative Description */}
       <p className="card-desc">{milestone.description}</p>
@@ -52,7 +67,7 @@ export function MilestoneCard({ milestone, isActive, onMouseEnter, onMouseLeave 
               title={`View ${proj.name}`}
             >
               <span>{proj.name}</span>
-              <span className="project-link-arrow" aria-hidden="true">↗</span>
+              <ArrowIcon />
             </a>
           ))}
         </div>

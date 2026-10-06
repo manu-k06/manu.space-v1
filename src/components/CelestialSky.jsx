@@ -1,586 +1,252 @@
 import React, { useEffect, useRef } from 'react';
 
-/**
- * CelestialSky Component (High-Performance 2D Canvas with 3D Orbital Astrophysics)
- * 
- * Features:
- * 1. Galaxy 1 (Upper Right): Grand 3D Tilted Spiral Galaxy (2-arm grand design, counter-clockwise).
- * 2. Galaxy 2 (Mid Right): Companion 3-Arm Pinwheel Spiral Galaxy (Pinwheel / Triangulum morphology,
- *    clockwise counter-rotation, complementary 3D inclination tilt angle, and radiant starlight core).
- * 3. Galaxy 3 (Lower Left): Distant Globular Satellite Cluster
- * 4. Rich Multi-Comet System: Frequent, simultaneous shooting stars & grand comets
- * 5. 100% Lightweight, Zero-Dependency Canvas 2D running at locked 60 FPS hardware acceleration.
- */
-export function CelestialSky() {
+// Seeded randomness keeps the sky coherent across resizes and React remounts.
+function randomSource(seed) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let value = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value;
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function makeSprite(color) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  const glow = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  glow.addColorStop(0, `rgba(${color},1)`);
+  glow.addColorStop(0.12, `rgba(${color},0.6)`);
+  glow.addColorStop(0.4, `rgba(${color},0.15)`);
+  glow.addColorStop(1, `rgba(${color},0)`);
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, 64, 64);
+  return canvas;
+}
+
+// These are generated canvas buffers, never downloaded image assets. Thousands
+// of diffuse particles are cached once; independent layers evolve during rendering.
+function makeDisk(seed, dust = false) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 900;
+  const ctx = canvas.getContext('2d');
+  const random = randomSource(seed);
+  const sprite = makeSprite(dust ? '4,7,12' : '190,203,219');
+  const gaussian = () =>
+    Math.sqrt(-2 * Math.log(Math.max(0.0001, random()))) *
+    Math.cos(random() * Math.PI * 2);
+  for (let i = 0; i < (dust ? 1800 : 18000); i++) {
+    const radius = Math.pow(random(), 0.8) * 390;
+    const arm = random() > 0.52 ? Math.PI : 0;
+    const angle =
+      radius * 0.013 +
+      arm +
+      gaussian() * (dust ? 0.16 : 0.36) +
+      Math.sin(radius * 0.024) * 0.16;
+    // A diffuse disc fills the gaps rather than drawing two dotted curves.
+    const theta = !dust && random() < 0.43 ? random() * Math.PI * 2 : angle;
+    const x = 450 + Math.cos(theta) * radius;
+    const y = 450 + Math.sin(theta) * radius;
+    const falloff = Math.pow(1 - radius / 410, 1.5);
+    const size = dust ? 12 + random() * 38 : 2 + random() * 15;
+    ctx.globalAlpha = (dust ? 0.12 : 0.1) * falloff;
+    ctx.drawImage(sprite, x - size / 2, y - size / 2, size, size);
+    if (!dust && random() < 0.055) {
+      ctx.globalAlpha = 0.1 + random() * 0.23;
+      ctx.fillStyle = '#dde1e8';
+      ctx.fillRect(x, y, 0.55 + random() * 0.6, 0.55 + random() * 0.6);
+    }
+  }
+  return canvas;
+}
+
+export function CelestialSky({ paused = false }) {
   const canvasRef = useRef(null);
+  const pauseRef = useRef(paused);
+  const wakeRef = useRef(() => {});
+  useEffect(() => {
+    pauseRef.current = paused;
+    wakeRef.current();
+  }, [paused]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas?.getContext('2d', { alpha: true });
     if (!ctx) return;
-
-    let animationFrameId;
-    let width = 0;
-    let height = 0;
-    // Cap DPR to 1.0: eliminates 75% GPU fillrate pressure on high-DPI displays without visual degradation
-    const dpr = 1.0;
-
-    // ==========================================
-    // PROCEDURAL SIMULATION SETUP
-    // ==========================================
-    let particles = [];
-    let fieldStars = [];
-    let comets = [];
-
-    // Pre-cached gradients to eliminate 360 dynamic allocations per second in 60 FPS loop
-    let cachedCoreGrad1 = null;
-    let cachedDiscGrad2 = null;
-    let cachedDustRing2 = null;
-    let cachedBarGrad2 = null;
-    let cachedNucleusGrad2 = null;
-    let cachedCoreGrad3 = null;
-
-    // Galaxy 1: Primary Grand Spiral Galaxy (Upper Right)
-    const g1 = {
-      getCenter: (w, h) => ({
-        x: w > 900 ? w * 0.78 : w * 0.72,
-        y: Math.min(h * 0.14, 380),
-      }),
-      arms: 2,
-      armSpread: 0.44,
-      tiltRatio: 0.58,
-      tiltAngle: -0.42,
-      maxRadius: 360,
-      baseSpeed: 0.00065,
-    };
-
-    // Galaxy 2: Companion 3-Arm Pinwheel Spiral Galaxy (Mid-Right Pass)
-    // Distinct from Galaxy 1: 3 sweeping arms, clockwise counter-rotation, complementary 3D tilt
-    const g2 = {
-      getCenter: (w, h) => ({
-        x: w > 900 ? w * 0.82 : w * 0.78,
-        y: Math.min(Math.max(h * 0.46, 800), 1250),
-      }),
-      arms: 3,
-      armSpread: 0.48,
-      tiltRatio: 0.50,
-      tiltAngle: 0.38,
-      maxRadius: 275,
-      baseSpeed: -0.00055,
-    };
-
-    // Galaxy 3: Globular Satellite Cluster (Lower Left)
-    const g3 = {
-      getCenter: (w, h) => ({
-        x: w > 900 ? w * 0.16 : w * 0.22,
-        y: h * 0.74,
-      }),
-      maxRadius: 210,
-      baseSpeed: -0.00045,
-    };
-
-    const initSimulation = (w, h) => {
-      particles = [];
-      fieldStars = [];
-      comets = [];
-
-      // Calculate responsive dimensions
-      g1.maxRadius = Math.min(Math.max(w * 0.32, 240), 380);
-      g2.maxRadius = Math.min(Math.max(w * 0.24, 180), 280);
-      g3.maxRadius = Math.min(Math.max(w * 0.18, 140), 220);
-
-      // Pre-compile radial gradients once during resize/init
-      const coreR1 = g1.maxRadius * 0.65;
-      cachedCoreGrad1 = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR1);
-      cachedCoreGrad1.addColorStop(0, 'rgba(255, 255, 255, 0.48)');
-      cachedCoreGrad1.addColorStop(0.15, 'rgba(235, 240, 250, 0.24)');
-      cachedCoreGrad1.addColorStop(0.40, 'rgba(190, 200, 220, 0.08)');
-      cachedCoreGrad1.addColorStop(0.75, 'rgba(140, 150, 170, 0.02)');
-      cachedCoreGrad1.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-      const coreR2 = g2.maxRadius * 0.62;
-      cachedDiscGrad2 = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR2);
-      cachedDiscGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.42)');
-      cachedDiscGrad2.addColorStop(0.18, 'rgba(230, 240, 255, 0.20)');
-      cachedDiscGrad2.addColorStop(0.48, 'rgba(185, 200, 225, 0.065)');
-      cachedDiscGrad2.addColorStop(0.82, 'rgba(140, 150, 175, 0.015)');
-      cachedDiscGrad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-      cachedDustRing2 = ctx.createRadialGradient(0, 0, coreR2 * 0.26, 0, 0, coreR2 * 0.42);
-      cachedDustRing2.addColorStop(0, 'rgba(0, 0, 0, 0)');
-      cachedDustRing2.addColorStop(0.5, 'rgba(10, 14, 22, 0.24)');
-      cachedDustRing2.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-      cachedBarGrad2 = ctx.createRadialGradient(0, 0, 0, 0, 0, 36);
-      cachedBarGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.70)');
-      cachedBarGrad2.addColorStop(0.35, 'rgba(235, 242, 255, 0.35)');
-      cachedBarGrad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-      cachedNucleusGrad2 = ctx.createRadialGradient(0, 0, 0, 0, 0, 16);
-      cachedNucleusGrad2.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-      cachedNucleusGrad2.addColorStop(0.40, 'rgba(240, 246, 255, 0.50)');
-      cachedNucleusGrad2.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-      const coreR3 = g3.maxRadius * 0.55;
-      cachedCoreGrad3 = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR3);
-      cachedCoreGrad3.addColorStop(0, 'rgba(240, 245, 255, 0.28)');
-      cachedCoreGrad3.addColorStop(0.25, 'rgba(190, 200, 220, 0.09)');
-      cachedCoreGrad3.addColorStop(0.70, 'rgba(140, 150, 170, 0.02)');
-      cachedCoreGrad3.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-      // ------------------------------------------
-      // 1. Generate Galaxy 1 Spiral Particles (580 particles, 2-Arm Grand Design)
-      // ------------------------------------------
-      const numG1 = w > 900 ? 580 : 350;
-      for (let i = 0; i < numG1; i++) {
-        const isCore = Math.random() < 0.26;
-        let r, theta;
-
-        if (isCore) {
-          r = Math.pow(Math.random(), 2.0) * (g1.maxRadius * 0.24);
-          theta = Math.random() * Math.PI * 2;
-        } else {
-          const armIndex = i % g1.arms;
-          const armOffset = (armIndex * (2 * Math.PI)) / g1.arms;
-          r = Math.pow(Math.random(), 0.92) * g1.maxRadius + 14;
-          const spiralAngle = Math.log(r / 14) * 1.85;
-          const scatter = (Math.random() - 0.5) * g1.armSpread * (r / g1.maxRadius + 0.18);
-          theta = armOffset + spiralAngle + scatter;
-        }
-
-        particles.push({
-          type: 'galaxy1',
-          r,
-          theta,
-          speed: (0.16 / (Math.sqrt(r) + 4)) * g1.baseSpeed * 320,
-          size: Math.random() < 0.08 ? 2.0 + Math.random() * 0.9 : 0.75 + Math.random() * 0.85,
-          baseAlpha: Math.random() * 0.6 + 0.3,
-          twinkleSpeed: 0.015 + Math.random() * 0.03,
-          twinklePhase: Math.random() * Math.PI * 2,
-          isProminent: Math.random() < 0.04,
-          isSilver: Math.random() < 0.35,
-        });
-      }
-
-      // ------------------------------------------
-      // 2. Generate Galaxy 2 Companion Spiral Particles (3-Arm Pinwheel with Starburst Nodes & Dust Lanes)
-      // ------------------------------------------
-      const numG2 = w > 900 ? 540 : 330;
-      for (let i = 0; i < numG2; i++) {
-        const isCore = Math.random() < 0.22;
-        let r, theta;
-        let isStarburst = false;
-        let isDust = false;
-
-        if (isCore) {
-          r = Math.pow(Math.random(), 2.1) * (g2.maxRadius * 0.22);
-          theta = Math.random() * Math.PI * 2;
-        } else {
-          const armIndex = i % g2.arms;
-          const armOffset = (armIndex * (2 * Math.PI)) / g2.arms;
-
-          // 12% interstellar dark dust absorption lane particles along inner arm edges
-          if (i % 8 === 0) {
-            isDust = true;
-            r = Math.pow(Math.random(), 0.95) * (g2.maxRadius * 0.88) + 18;
-            const spiralAngle = Math.log(r / 12) * 2.15;
-            theta = armOffset + spiralAngle - 0.16 + (Math.random() - 0.5) * 0.12;
-          } else if (i % 14 === 1) {
-            // Prominent starburst cluster nodes along arm ridges
-            isStarburst = true;
-            const fraction = 0.30 + ((i % 5) / 5) * 0.60;
-            r = g2.maxRadius * fraction + (Math.random() - 0.5) * 8;
-            const spiralAngle = Math.log(r / 12) * 2.15;
-            theta = armOffset + spiralAngle + (Math.random() - 0.5) * 0.08;
-          } else {
-            r = Math.pow(Math.random(), 0.90) * g2.maxRadius + 12;
-            const spiralAngle = Math.log(r / 12) * 2.15;
-            const scatter = (Math.random() - 0.5) * g2.armSpread * (r / g2.maxRadius + 0.20);
-            theta = armOffset + spiralAngle + scatter;
-          }
-        }
-
-        particles.push({
-          type: 'galaxy2',
-          r,
-          theta,
-          speed: (0.15 / (Math.sqrt(r) + 4.2)) * g2.baseSpeed * 300,
-          size: isDust 
-            ? Math.random() * 2.2 + 3.4 
-            : isStarburst 
-              ? Math.random() * 1.0 + 2.5 
-              : Math.random() < 0.09 ? 1.9 + Math.random() * 0.9 : 0.7 + Math.random() * 0.85,
-          baseAlpha: isDust 
-            ? Math.random() * 0.10 + 0.08 
-            : isStarburst 
-              ? Math.random() * 0.25 + 0.75 
-              : Math.random() * 0.6 + 0.3,
-          twinkleSpeed: 0.014 + Math.random() * 0.028,
-          twinklePhase: Math.random() * Math.PI * 2,
-          isProminent: isStarburst || Math.random() < 0.045,
-          isSilver: isDust ? false : Math.random() < 0.35,
-          isDust,
-          isStarburst,
-        });
-      }
-
-      // ------------------------------------------
-      // 3. Generate Galaxy 3 Globular Satellite (180 particles)
-      // ------------------------------------------
-      const numG3 = w > 900 ? 180 : 110;
-      for (let i = 0; i < numG3; i++) {
-        const r = Math.pow(Math.random(), 1.7) * g3.maxRadius;
-        const theta = Math.random() * Math.PI * 2;
-
-        particles.push({
-          type: 'galaxy3',
-          r,
-          theta,
-          speed: (0.10 / (Math.sqrt(r) + 5)) * g3.baseSpeed * 240,
-          size: 0.7 + Math.random() * 0.9,
-          baseAlpha: Math.random() * 0.5 + 0.2,
-          twinkleSpeed: 0.012 + Math.random() * 0.02,
-          twinklePhase: Math.random() * Math.PI * 2,
-          isProminent: false,
-          isSilver: true,
-        });
-      }
-
-      // ------------------------------------------
-      // 4. Ambient Background Field Stars (100 stars)
-      // ------------------------------------------
-      const numField = 100;
-      for (let i = 0; i < numField; i++) {
-        fieldStars.push({
-          x: Math.random(),
-          y: Math.random(),
-          size: Math.random() < 0.12 ? 2.0 : (Math.random() < 0.4 ? 1.3 : 0.8),
-          alpha: Math.random() * 0.55 + 0.25,
-          twinkleSpeed: 0.01 + Math.random() * 0.025,
-          twinklePhase: Math.random() * Math.PI * 2,
-          isSilver: Math.random() < 0.4,
-        });
-      }
-    };
-
-    const handleResize = () => {
-      if (!canvas.parentElement) return;
-      width = canvas.parentElement.clientWidth;
-      height = canvas.parentElement.clientHeight;
-
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-
-      ctx.resetTransform?.() || ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
-
-      initSimulation(width, height);
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    // ==========================================
-    // VIEWPORT CULLING SYSTEM (Eliminates off-screen rendering)
-    // ==========================================
-    let viewTop = 0;
-    let viewBottom = 1200;
-
-    const updateViewport = () => {
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      viewTop = Math.max(0, -rect.top) - 180;
-      viewBottom = viewTop + window.innerHeight + 360;
-    };
-
-    updateViewport();
-    window.addEventListener('scroll', updateViewport, { passive: true });
-
-    // ==========================================
-    // LIVE ANIMATION RENDER LOOP (60 FPS)
-    // ==========================================
-    let time = 0;
-    const cosPhi1 = Math.cos(g1.tiltAngle);
-    const sinPhi1 = Math.sin(g1.tiltAngle);
-
-    const cosPhi2 = Math.cos(g2.tiltAngle);
-    const sinPhi2 = Math.sin(g2.tiltAngle);
-
-    // Helper to spawn a dynamic comet
-    const spawnComet = () => {
-      const isGrandComet = Math.random() < 0.25;
-      const startX = Math.random() * (width * 0.85) + width * 0.15;
-      const startY = Math.random() * (height * 0.65) + 30;
-      const speed = isGrandComet ? Math.random() * 4 + 5 : Math.random() * 7 + 8;
-      const angle = (Math.random() * 0.25 + 0.52);
-
-      comets.push({
-        x: startX,
-        y: startY,
-        dx: -Math.cos(angle) * speed,
-        dy: Math.sin(angle) * speed,
-        len: isGrandComet ? Math.random() * 90 + 110 : Math.random() * 50 + 55,
-        headSize: isGrandComet ? 2.5 : 1.5,
-        life: 1.0,
-        decay: isGrandComet ? 0.012 : 0.022,
-        isGrand: isGrandComet,
-      });
-    };
+    const section = canvas.parentElement;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const random = randomSource(2026);
+    const disk = makeDisk(84);
+    const dust = makeDisk(84, true);
+    const starSprite = makeSprite('218,225,235');
+    const coreSprite = makeSprite('243,232,210');
+    const stars = Array.from({ length: 220 }, () => ({
+      x: random(),
+      y: random(),
+      size: 0.45 + Math.pow(random(), 5) * 1.5,
+      alpha: 0.12 + random() * 0.4,
+      phase: random() * Math.PI * 2,
+      twinkle: random() < 0.16,
+    }));
+    let width = 0,
+      height = 0,
+      sectionHeight = 0,
+      dpr = 1;
+    let frame = 0,
+      last = 0,
+      time = 0,
+      lastPaint = 0;
+    let inView = true,
+      nextMeteor = 18,
+      meteor = null;
 
     const render = () => {
-      time += 1;
+      if (!width || !height) return;
+      const rect = section.getBoundingClientRect();
+      const mobile = width < 700;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, width, height);
-
-      const c1 = g1.getCenter(width, height);
-      const c2 = g2.getCenter(width, height);
-      const c3 = g3.getCenter(width, height);
-
-      // ------------------------------------------
-      // 1. Draw Galaxy 1 Galactic Core Glow (Culled if off-screen)
-      // ------------------------------------------
-      const coreR1 = g1.maxRadius * 0.65;
-      if (c1.y + coreR1 >= viewTop && c1.y - coreR1 <= viewBottom && cachedCoreGrad1) {
+      // A viewport-sized canvas avoids a multi-thousand-pixel animated surface.
+      for (const star of stars) {
+        const y = star.y * sectionHeight + rect.top;
+        if (y < -5 || y > height + 5) continue;
+        const twinkle = star.twinkle
+          ? 0.85 + Math.sin(time * 0.45 + star.phase) * 0.15
+          : 1;
+        ctx.globalAlpha = star.alpha * twinkle;
+        const size = star.size * 3;
+        ctx.drawImage(
+          starSprite,
+          star.x * width - size / 2,
+          y - size / 2,
+          size,
+          size
+        );
+      }
+      // One dominant, inclined galaxy; the lower page stays deliberately quiet.
+      const radius = Math.min(width * (mobile ? 0.66 : 0.33), 470);
+      const centerX = width * (mobile ? 0.9 : 0.81);
+      const centerY = (mobile ? 290 : 270) + rect.top;
+      if (centerY + radius > 0 && centerY - radius < height) {
         ctx.save();
-        ctx.translate(c1.x, c1.y);
-        ctx.fillStyle = cachedCoreGrad1;
-        ctx.beginPath();
-        ctx.arc(0, 0, coreR1, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(-0.48);
+        ctx.scale(1, 0.58);
+        ctx.globalAlpha = mobile ? 0.48 : 0.85;
+        ctx.rotate(time * 0.004);
+        ctx.drawImage(disk, -radius, -radius, radius * 2, radius * 2);
+        ctx.rotate(Math.sin(time * 0.025) * 0.025);
+        ctx.globalAlpha = 0.8;
+        ctx.drawImage(dust, -radius, -radius, radius * 2, radius * 2);
+        ctx.globalAlpha = mobile ? 0.22 : 0.4;
+        ctx.drawImage(
+          coreSprite,
+          -radius * 0.23,
+          -radius * 0.23,
+          radius * 0.46,
+          radius * 0.46
+        );
+        ctx.globalAlpha = mobile ? 0.35 : 0.65;
+        ctx.drawImage(coreSprite, -10, -10, 20, 20);
         ctx.restore();
       }
-
-      // ------------------------------------------
-      // 2. Draw Galaxy 2 Companion Spiral Core & Disc Glow (Culled if off-screen)
-      // ------------------------------------------
-      const coreR2 = g2.maxRadius * 0.62;
-      if (c2.y + coreR2 >= viewTop && c2.y - coreR2 <= viewBottom && cachedDiscGrad2) {
-        ctx.save();
-        ctx.translate(c2.x, c2.y);
-        ctx.rotate(g2.tiltAngle);
-        ctx.scale(1.0, g2.tiltRatio);
-
-        // Diffuse elliptical galactic disk glow
-        ctx.fillStyle = cachedDiscGrad2;
+      // A rare, short meteor crosses an empty part of the sky (at most one).
+      if (meteor) {
+        const age = time - meteor.start;
+        const x = meteor.x - age * 160;
+        const y = meteor.y + rect.top + age * 70;
+        ctx.globalAlpha = Math.sin(Math.min(1, age / 1.6) * Math.PI) * 0.45;
+        const trail = ctx.createLinearGradient(x, y, x + 65, y - 28);
+        trail.addColorStop(0, '#dce3ec');
+        trail.addColorStop(1, 'transparent');
+        ctx.strokeStyle = trail;
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.arc(0, 0, coreR2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Interstellar dust absorption ring inside core disk
-        ctx.fillStyle = cachedDustRing2;
-        ctx.beginPath();
-        ctx.arc(0, 0, coreR2 * 0.42, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Inner galactic bar / oval condensation
-        ctx.fillStyle = cachedBarGrad2;
-        ctx.beginPath();
-        ctx.save();
-        ctx.scale(1.35, 0.72);
-        ctx.arc(0, 0, 36, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        // Brilliant central galactic nucleus
-        ctx.fillStyle = cachedNucleusGrad2;
-        ctx.beginPath();
-        ctx.arc(0, 0, 16, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-
-      // ------------------------------------------
-      // 3. Draw Galaxy 3 Globular Core Glow (Culled if off-screen)
-      // ------------------------------------------
-      const coreR3 = g3.maxRadius * 0.55;
-      if (c3.y + coreR3 >= viewTop && c3.y - coreR3 <= viewBottom && cachedCoreGrad3) {
-        ctx.save();
-        ctx.translate(c3.x, c3.y);
-        ctx.fillStyle = cachedCoreGrad3;
-        ctx.beginPath();
-        ctx.arc(0, 0, coreR3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-
-      // ------------------------------------------
-      // 4. Render Background Field Stars (Culled)
-      // ------------------------------------------
-      for (let i = 0; i < fieldStars.length; i++) {
-        const s = fieldStars[i];
-        const sy = s.y * height;
-        if (sy < viewTop || sy > viewBottom) continue;
-
-        const twinkle = Math.sin(time * s.twinkleSpeed + s.twinklePhase) * 0.35 + 0.65;
-        const alpha = Math.max(0, Math.min(1, s.alpha * twinkle));
-
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = s.isSilver ? '#d8e0ec' : '#ffffff';
-        ctx.beginPath();
-        ctx.arc(s.x * width, sy, s.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // ------------------------------------------
-      // 5. Render Live Orbiting Particles (with Viewport Culling)
-      // ------------------------------------------
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.theta += p.speed;
-
-        let px, py;
-        if (p.type === 'galaxy1') {
-          const xp = p.r * Math.cos(p.theta);
-          const yp = p.r * Math.sin(p.theta) * g1.tiltRatio;
-          px = c1.x + (xp * cosPhi1 - yp * sinPhi1);
-          py = c1.y + (xp * sinPhi1 + yp * cosPhi1);
-        } else if (p.type === 'galaxy2') {
-          const xp = p.r * Math.cos(p.theta);
-          const yp = p.r * Math.sin(p.theta) * g2.tiltRatio;
-          px = c2.x + (xp * cosPhi2 - yp * sinPhi2);
-          py = c2.y + (xp * sinPhi2 + yp * cosPhi2);
-        } else if (p.type === 'galaxy3') {
-          px = c3.x + p.r * Math.cos(p.theta);
-          py = c3.y + p.r * Math.sin(p.theta) * 0.85;
-        }
-
-        // VIEWPORT CULLING: Skip drawing off-screen particles
-        if (py < viewTop || py > viewBottom || px < -40 || px > width + 40) {
-          continue;
-        }
-
-        let alpha = p.baseAlpha;
-
-        if (p.type === 'galaxy1' || p.type === 'galaxy3') {
-          const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
-          alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
-        } else if (p.type === 'galaxy2') {
-          // Handle dark interstellar dust clouds
-          if (p.isDust) {
-            const dustTwinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.2 + 0.8;
-            ctx.globalAlpha = Math.max(0, Math.min(1, p.baseAlpha * dustTwinkle));
-            ctx.fillStyle = 'rgba(150, 165, 195, 0.40)';
-            ctx.beginPath();
-            ctx.arc(px, py, p.size, 0, Math.PI * 2);
-            ctx.fill();
-            continue;
-          }
-
-          const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
-          alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
-
-          // Soft luminous aura around starburst cluster nodes
-          if (p.isStarburst && alpha > 0.4) {
-            ctx.globalAlpha = alpha * 0.45;
-            ctx.fillStyle = 'rgba(215, 235, 255, 0.6)';
-            ctx.beginPath();
-            ctx.arc(px, py, p.size * 2.5, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        } else if (p.type === 'galaxy3') {
-          px = c3.x + p.r * Math.cos(p.theta);
-          py = c3.y + p.r * Math.sin(p.theta) * 0.85;
-
-          const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.3 + 0.7;
-          alpha = Math.max(0, Math.min(1, p.baseAlpha * twinkle));
-        }
-
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = p.isSilver ? '#e4ebf5' : '#ffffff';
-        ctx.beginPath();
-        ctx.arc(px, py, p.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 4-point diffraction cross spikes on prominent stars & starburst clusters
-        if (p.isProminent && alpha > 0.55) {
-          ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.75})`;
-          ctx.lineWidth = 0.8;
-          const crossSize = p.isStarburst ? p.size * 3.8 : p.size * 3.4;
-
-          ctx.beginPath();
-          ctx.moveTo(px - crossSize, py);
-          ctx.lineTo(px + crossSize, py);
-          ctx.moveTo(px, py - crossSize);
-          ctx.lineTo(px, py + crossSize);
-          ctx.stroke();
-        }
-      }
-
-      // ------------------------------------------
-      // 6. Active Multi-Comet System (Frequent & Luminous)
-      // ------------------------------------------
-      if (Math.random() < 0.024 && comets.length < 4) {
-        spawnComet();
-      }
-
-      for (let i = comets.length - 1; i >= 0; i--) {
-        const m = comets[i];
-        m.x += m.dx;
-        m.y += m.dy;
-        m.life -= m.decay;
-
-        if (m.life <= 0 || m.x < -100 || m.y > height + 100) {
-          comets.splice(i, 1);
-          continue;
-        }
-
-        const tailX = m.x - (m.dx * m.len) / 10;
-        const tailY = m.y - (m.dy * m.len) / 10;
-
-        // Coma / Ion Dust Tail
-        const grad = ctx.createLinearGradient(m.x, m.y, tailX, tailY);
-        grad.addColorStop(0, `rgba(255, 255, 255, ${m.life * 0.95})`);
-        grad.addColorStop(0.2, `rgba(220, 230, 250, ${m.life * 0.65})`);
-        grad.addColorStop(0.6, `rgba(180, 195, 225, ${m.life * 0.25})`);
-        grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = m.isGrand ? 2.4 : 1.6;
-        ctx.beginPath();
-        ctx.moveTo(m.x, m.y);
-        ctx.lineTo(tailX, tailY);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + 65, y - 28);
         ctx.stroke();
-
-        // Luminous Comet Nucleus Head
-        ctx.globalAlpha = m.life;
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(m.x, m.y, m.headSize, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Soft outer coma glow on grand comets
-        if (m.isGrand) {
-          ctx.fillStyle = `rgba(220, 230, 255, ${m.life * 0.4})`;
-          ctx.beginPath();
-          ctx.arc(m.x, m.y, m.headSize * 2.8, 0, Math.PI * 2);
-          ctx.fill();
-        }
       }
-
       ctx.globalAlpha = 1;
-      animationFrameId = requestAnimationFrame(render);
+      // Keep the introductory copy quiet, particularly on narrow screens.
+      const shade = ctx.createLinearGradient(0, 0, width, 0);
+      shade.addColorStop(0, 'rgba(14,14,14,0.8)');
+      shade.addColorStop(mobile ? 0.45 : 0.38, 'rgba(14,14,14,0.28)');
+      shade.addColorStop(1, 'rgba(14,14,14,0)');
+      ctx.fillStyle = shade;
+      ctx.fillRect(0, 0, width, height);
     };
-
-    render();
-
+    const canAnimate = () =>
+      inView && !document.hidden && !pauseRef.current && !reduced.matches;
+    const tick = (now) => {
+      frame = 0;
+      if (!canAnimate()) return;
+      time += Math.min((now - last) / 1000, 0.1);
+      last = now;
+      if (time > nextMeteor) {
+        meteor = {
+          start: time,
+          x: width * 0.8,
+          y: -section.getBoundingClientRect().top + height * 0.22,
+        };
+        nextMeteor = time + 24 + random() * 18;
+      }
+      if (meteor && time - meteor.start > 1.6) meteor = null;
+      // Atmospheric motion is slow: 30 painted frames/sec is ample, irrespective of refresh rate.
+      if (now - lastPaint >= 1000 / 30) {
+        render();
+        lastPaint = now;
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    const wake = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      if (reduced.matches) meteor = null;
+      render();
+      if (canAnimate()) {
+        last = performance.now();
+        frame = requestAnimationFrame(tick);
+      }
+    };
+    wakeRef.current = wake;
+    const resize = () => {
+      width = document.documentElement.clientWidth;
+      height = window.innerHeight;
+      sectionHeight = section.clientHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, width < 700 ? 1.5 : 2);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      wake();
+    };
+    const onScroll = () => {
+      if (!canAnimate() && inView) render();
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(section);
+    const intersection = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      wake();
+    });
+    intersection.observe(section);
+    window.addEventListener('resize', resize);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('visibilitychange', wake);
+    reduced.addEventListener('change', wake);
+    resize();
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', updateViewport);
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      intersection.disconnect();
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('visibilitychange', wake);
+      reduced.removeEventListener('change', wake);
+      wakeRef.current = () => {};
     };
   }, []);
 
   return (
-    <div className="celestial-canvas-wrap" aria-hidden="true">
-      {/* 100% Live Procedural Canvas Deep Space (Galaxies + Comets) */}
-      <canvas ref={canvasRef} className="live-galaxy-canvas" />
-
-      {/* Atmospheric Cosmic Backdrop Vignettes */}
-      <div className="nebula-cloud nebula-cloud--top" />
-      <div className="nebula-cloud nebula-cloud--mid-left" />
-      <div className="nebula-cloud nebula-cloud--bottom-right" />
-    </div>
+    <canvas ref={canvasRef} className="live-galaxy-canvas" aria-hidden="true" />
   );
 }

@@ -4,7 +4,7 @@ export const journeyMilestones = [
     id: 'detour',
     year: '2024',
     title: 'The Detour',
-    category: 'Foundations & Resilience',
+    category: 'Foundations',
     description:
       'Chased IIT JEE for a year. While the target changed, the grind built intense stamina, self-reliance, and introduced me to coding — realizing that building things from scratch was where I belonged.',
     tags: ['Self-Discipline', 'Algorithms', 'Foundations'],
@@ -14,9 +14,9 @@ export const journeyMilestones = [
     id: 'fisat',
     year: '2025',
     title: 'Touchdown at FISAT',
-    category: 'CS Core & Fundamentals',
+    category: 'CS fundamentals',
     description:
-      'Started B.Tech CS at FISAT, Kerala. Mastered computing fundamentals — C, discrete math, data structures, and Linux. Began shipping open-source projects and realized building beats planning.',
+      'Started B.Tech CS at FISAT, Kerala. Studied computing fundamentals — C, discrete math, data structures, and Linux. Began shipping open-source projects and realized building beats planning.',
     tags: ['C', 'Discrete Math', 'Linux', 'Git'],
   },
   {
@@ -38,7 +38,7 @@ export const journeyMilestones = [
     id: 'systems-ai',
     year: 'MID 2026',
     title: 'Engines & Full-Stack AI',
-    category: 'Deep Engineering & Architecture',
+    category: 'Full-stack & AI',
     description:
       'Built Bone Runner | Genesis (60 FPS Canvas 2D engine with Supabase anti-cheat). Architected Cineforge (React, FastAPI, Gemini AI streaming) and built RAG Chatbot with ChromaDB.',
     tags: ['Canvas 2D', 'FastAPI', 'Supabase', 'Gemini AI'],
@@ -53,10 +53,10 @@ export const journeyMilestones = [
     id: 'current-orbit',
     year: 'NOW & HORIZON',
     title: 'Current Orbit',
-    category: 'Semester 2 & Beyond',
+    category: 'Learning & building',
     description:
-      'Accelerating through Semester 2 coursework, preparing for GATE CS, and hunting for software engineering internships. Exploring distributed systems and autonomous AI.',
-    tags: ['Semester 2', 'GATE CS', 'Distributed Systems'],
+      'Continuing my Computer Science coursework, preparing for GATE CS, and hunting for software engineering internships. Exploring distributed systems and autonomous AI.',
+    tags: ['Computer Science', 'GATE CS', 'Distributed Systems'],
     isCurrent: true,
   },
 ];

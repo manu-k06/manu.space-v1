@@ -1,19 +1,25 @@
 import { useEffect, useRef } from 'react';
+import { useReducedMotion } from './useReducedMotion';
 
 /**
  * Custom hook for smooth mouse parallax translation.
- * 
+ *
  * Tracks mouse movement across the viewport and applies a subtle 3D translation
  * to the referenced DOM element. Uses requestAnimationFrame for silky 60fps
  * updates without triggering React re-renders.
- * 
+ *
  * @param {number} maxOffset - Maximum pixel shift in either direction (default: 20px)
  * @returns {React.RefObject} - Ref to attach to the target container element
  */
 export function useParallax(maxOffset = 20) {
   const targetRef = useRef(null);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
+    if (reduced || !matchMedia('(pointer: fine)').matches) {
+      if (targetRef.current) targetRef.current.style.transform = '';
+      return;
+    }
     let rafId = null;
 
     const handleMouseMove = (e) => {
@@ -44,7 +50,7 @@ export function useParallax(maxOffset = 20) {
       window.removeEventListener('mousemove', handleMouseMove);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [maxOffset]);
+  }, [maxOffset, reduced]);
 
   return targetRef;
 }

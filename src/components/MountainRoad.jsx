@@ -1,229 +1,184 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
-/**
- * MountainRoad Component
- * 
- * Renders an authentic mountain switchback pass with realistic curves,
- * stone curbs, asphalt roadbed, animated centerline dashes, a luminous
- * traveled road illumination trail, and an interactive 60/120 FPS
- * RAF-interpolated starlight beacon.
- * 
- * Interactive behavior:
- * - On scroll: beacon smoothly glides down the mountain pass.
- * - On hover (checkpoint node or milestone card): beacon smoothly glides
- *   directly to the hovered checkpoint along the road curve.
- * - On mouse leave: beacon smoothly glides back to scroll position.
- */
-export function MountainRoad({ activeStep, setActiveStep }) {
+// Measure the actual cards: fonts, text length and resizing share one coordinate system.
+export function MountainRoad({ containerRef, activeStep, paused }) {
+  const [geometry, setGeometry] = useState(null);
   const svgRef = useRef(null);
   const pathRef = useRef(null);
-  const progressPathRef = useRef(null);
+  const progressRef = useRef(null);
   const beaconRef = useRef(null);
-
-  // Keep a ref to activeStep so RAF loop reads it without re-mounting
-  const activeStepRef = useRef(activeStep);
+  const activeRef = useRef(activeStep);
+  const pausedRef = useRef(paused);
+  const wakeRef = useRef(() => {});
   useEffect(() => {
-    activeStepRef.current = activeStep;
-  }, [activeStep]);
+    activeRef.current = activeStep;
+    pausedRef.current = paused;
+    wakeRef.current();
+  }, [activeStep, paused]);
 
-  // Switchback Hairpin Waypoints along the mountain pass
-  const waypoints = [
-    { step: '01', x: 220, y: 440, label: 'Base Camp' },
-    { step: '02', x: 780, y: 960, label: 'Launchpad' },
-    { step: '03', x: 220, y: 1500, label: 'First Orbit' },
-    { step: '04', x: 760, y: 1980, label: 'Alpine Ridge' },
-    { step: '05', x: 500, y: 2320, label: 'Summit Peak' },
-  ];
-
-  // Mountain Switchback Path definition with authentic hairpin loops
-  const roadD = `
-    M 500,40
-    C 520,130 680,190 670,300
-    C 650,410 320,330 220,440
-    C 130,540 210,680 460,750
-    C 710,810 860,830 780,960
-    C 710,1080 470,1130 320,1250
-    C 170,1350 130,1430 220,1500
-    C 300,1580 620,1650 760,1780
-    C 850,1880 840,1950 760,1980
-    C 640,2050 510,2120 500,2320
-  `;
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const measure = () => {
+      const width = container.clientWidth;
+      const rows = [...container.querySelectorAll('.milestone-row')];
+      const points = rows.map((row, index) => ({
+        step: row.dataset.step,
+        x: width * (index % 2 === 0 ? 0.46 : 0.54),
+        y: row.offsetTop + 42,
+        bottom: row.offsetTop + row.offsetHeight,
+        top: row.offsetTop,
+      }));
+      if (!points.length) return;
+      let d = `M ${width * 0.52} 0 Q ${width * 0.52} ${points[0].y} ${points[0].x} ${points[0].y}`;
+      for (let i = 1; i < points.length; i++) {
+        const previous = points[i - 1];
+        const point = points[i];
+        const middle = (previous.bottom + point.top) / 2;
+        const bend = width * (i % 2 === 1 ? 0.79 : 0.21);
+        d += ` C ${previous.x} ${previous.y + 80}, ${bend} ${middle - 40}, ${width / 2} ${middle}`;
+        d += ` C ${width - bend} ${middle + 40}, ${point.x} ${point.y - 25}, ${point.x} ${point.y}`;
+      }
+      const last = points[points.length - 1];
+      d += ` Q ${width / 2} ${last.y + 50} ${width / 2} ${last.y + 95}`;
+      setGeometry({ width, height: container.clientHeight, points, d });
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(container);
+    container
+      .querySelectorAll('.milestone-row')
+      .forEach((row) => observer.observe(row));
+    measure();
+    return () => observer.disconnect();
+  }, [containerRef]);
 
   useEffect(() => {
     const svg = svgRef.current;
     const path = pathRef.current;
-    const beacon = beaconRef.current;
-    const progressPath = progressPathRef.current;
-    if (!path || !beacon || !svg) return;
-
-    const len = path.getTotalLength();
-    if (progressPath) {
-      progressPath.style.strokeDasharray = `${len} ${len}`;
-      progressPath.style.strokeDashoffset = `${len}`;
-    }
-
-    // Pre-calculate exact progress fraction along path for each waypoint
-    const waypointProgressMap = {};
-    const samples = 400;
-    for (const wp of waypoints) {
-      let bestDist = Infinity;
-      let bestT = 0;
-      for (let s = 0; s <= samples; s++) {
-        const t = s / samples;
-        const pt = path.getPointAtLength(t * len);
-        const d = Math.hypot(pt.x - wp.x, pt.y - wp.y);
-        if (d < bestDist) {
-          bestDist = d;
-          bestT = t;
-        }
-      }
-      waypointProgressMap[wp.step] = bestT;
-    }
-
-    let currentProgress = 0;
-    let scrollProgress = 0;
-    let animationFrameId;
-
-    const handleScroll = () => {
-      const rect = svg.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // Start tracking smoothly as the road enters the viewport
-      const totalDistance = rect.height - vh * 0.35;
-      const scrolled = vh * 0.40 - rect.top;
-      scrollProgress = Math.min(Math.max(scrolled / (totalDistance || 1), 0), 1);
+    if (!geometry || !path) return;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const desktop = matchMedia('(min-width: 1001px)');
+    const length = path.getTotalLength();
+    const samples = Array.from({ length: 501 }, (_, index) =>
+      path.getPointAtLength((length * index) / 500)
+    );
+    const checkpoints = Object.fromEntries(
+      geometry.points.map((point) => {
+        let nearest = 0;
+        samples.forEach((sample, index) => {
+          if (
+            Math.hypot(sample.x - point.x, sample.y - point.y) <
+            Math.hypot(
+              samples[nearest].x - point.x,
+              samples[nearest].y - point.y
+            )
+          )
+            nearest = index;
+        });
+        return [point.step, nearest / 500];
+      })
+    );
+    progressRef.current.style.strokeDasharray = `${length} ${length}`;
+    let frame = 0,
+      previousTime = 0,
+      current = 0,
+      target = 0;
+    let visible = true;
+    const paint = () => {
+      const point = path.getPointAtLength(current * length);
+      beaconRef.current.setAttribute(
+        'transform',
+        `translate(${point.x}, ${point.y})`
+      );
+      progressRef.current.style.strokeDashoffset = length * (1 - current);
     };
-
-    // Continuous 60-120 FPS RAF lerp loop: converts discrete scroll notches & hover jumps into buttery smooth motion
-    const animate = () => {
-      // If hovering over a milestone or waypoint, prioritize gliding to that checkpoint
-      let targetProgress;
-      const hoveredStep = activeStepRef.current;
-      if (hoveredStep && waypointProgressMap[hoveredStep] !== undefined) {
-        targetProgress = waypointProgressMap[hoveredStep];
-      } else {
-        targetProgress = scrollProgress;
-      }
-
-      const lerpSpeed = hoveredStep ? 0.095 : 0.085;
-      currentProgress += (targetProgress - currentProgress) * lerpSpeed;
-
-      const point = path.getPointAtLength(currentProgress * len);
-      beacon.setAttribute('transform', `translate(${point.x.toFixed(2)}, ${point.y.toFixed(2)})`);
-
-      if (progressPath) {
-        progressPath.style.strokeDashoffset = `${(len * (1 - currentProgress)).toFixed(1)}`;
-      }
-
-      animationFrameId = requestAnimationFrame(animate);
+    const animate = (now) => {
+      frame = 0;
+      const elapsed = Math.min((now - previousTime) / 1000 || 1 / 60, 0.05);
+      previousTime = now;
+      current += (target - current) * (1 - Math.exp(-7 * elapsed));
+      if (Math.abs(target - current) < 0.0001) current = target;
+      paint();
+      if (current !== target) frame = requestAnimationFrame(animate);
     };
-
-    handleScroll();
-    animate();
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
-
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      if (!desktop.matches || !visible || document.hidden || pausedRef.current)
+        return;
+      const readingY =
+        window.innerHeight * 0.42 - svg.getBoundingClientRect().top;
+      let nearest = 0;
+      samples.forEach((point, index) => {
+        if (
+          Math.abs(point.y - readingY) < Math.abs(samples[nearest].y - readingY)
+        )
+          nearest = index;
+      });
+      target = checkpoints[activeRef.current] ?? nearest / 500;
+      if (reduced.matches) {
+        current = target;
+        paint();
+        return;
+      }
+      previousTime = performance.now();
+      frame = requestAnimationFrame(animate);
+    };
+    wakeRef.current = update;
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      update();
+    });
+    observer.observe(svg);
+    window.addEventListener('scroll', update, { passive: true });
+    document.addEventListener('visibilitychange', update);
+    reduced.addEventListener('change', update);
+    desktop.addEventListener('change', update);
+    paint();
+    update();
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener('scroll', update);
+      document.removeEventListener('visibilitychange', update);
+      reduced.removeEventListener('change', update);
+      desktop.removeEventListener('change', update);
+      wakeRef.current = () => {};
     };
-  }, []);
+  }, [geometry]);
 
+  if (!geometry) return null;
   return (
     <svg
       ref={svgRef}
       className="switchback-svg-canvas"
-      viewBox="0 0 1000 2400"
-      preserveAspectRatio="none"
+      viewBox={`0 0 ${geometry.width} ${geometry.height}`}
       aria-hidden="true"
     >
-      <defs>
-        <radialGradient id="beaconGlowGradient" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-          <stop offset="35%" stopColor="#c4b5a4" stopOpacity="0.65" />
-          <stop offset="70%" stopColor="#c4b5a4" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#c4b5a4" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-
-      {/* Layer 1: Outer Stone Curb / Shoulder */}
-      <path d={roadD} className="road-curb" />
-
-      {/* Layer 2: Main Asphalt Road Surface */}
-      <path d={roadD} className="road-asphalt" />
-
-      {/* Layer 3: Painted Center Dashed Line */}
-      <path
-        ref={pathRef}
-        d={roadD}
-        className="road-centerline"
-      />
-
-      {/* Layer 3b: Traveled Road Illuminated Starlight Line */}
-      <path
-        ref={progressPathRef}
-        d={roadD}
-        className="road-traveled-light"
-      />
-
-      {/* Layer 4: Switchback Hairpin Waypoints */}
-      {waypoints.map((wp) => {
-        const isActive = activeStep === wp.step;
-        return (
-          <g
-            key={wp.step}
-            className={`waypoint-group ${isActive ? 'waypoint-group--active' : ''}`}
-            onClick={() => setActiveStep && setActiveStep(wp.step)}
-            onMouseEnter={() => setActiveStep && setActiveStep(wp.step)}
-            onMouseLeave={() => setActiveStep && setActiveStep(null)}
-            style={{ cursor: 'pointer' }}
-          >
-            {/* Pulsing halo */}
-            <circle
-              cx={wp.x}
-              cy={wp.y}
-              r={isActive ? 30 : 22}
-              className="waypoint-node-ring"
-            />
-            {/* Core disk */}
-            <circle
-              cx={wp.x}
-              cy={wp.y}
-              r={isActive ? 16 : 14}
-              className="waypoint-node-disk"
-              style={{
-                stroke: isActive ? '#ffffff' : 'var(--accent)',
-                fill: isActive ? 'var(--accent)' : '#141414',
-              }}
-            />
-            {/* Number */}
-            <text
-              x={wp.x}
-              y={wp.y}
-              className="waypoint-node-number"
-              style={{ fill: isActive ? '#0e0e0e' : '#ffffff' }}
-            >
-              {wp.step}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* Layer 5: Traveling Starlight Beacon (Silky 60/120 FPS RAF tracking with zero React re-renders) */}
-      <g ref={beaconRef} transform="translate(500, 40)" className="traveler-beacon-glow">
-        <circle
-          cx="0"
-          cy="0"
-          r="30"
-          fill="url(#beaconGlowGradient)"
-        />
-        <circle
-          cx="0"
-          cy="0"
-          r="6"
-          className="traveler-beacon-core"
-        />
+      <path d={geometry.d} className="road-curb" />
+      <path d={geometry.d} className="road-asphalt" />
+      <path ref={pathRef} d={geometry.d} className="road-centerline" />
+      <path ref={progressRef} d={geometry.d} className="road-traveled-light" />
+      {geometry.points.map((point) => (
+        <g
+          key={point.step}
+          className={`waypoint-group ${activeStep === point.step ? 'waypoint-group--active' : ''}`}
+        >
+          <circle
+            cx={point.x}
+            cy={point.y}
+            r="17"
+            className="waypoint-node-disk"
+          />
+          <text x={point.x} y={point.y} className="waypoint-node-number">
+            {point.step}
+          </text>
+        </g>
+      ))}
+      <g ref={beaconRef} className="traveler-beacon">
+        <circle r="11" fill="#c4b5a4" opacity="0.1" />
+        <circle r="5" fill="#e2d8ca" opacity="0.3" />
+        <circle r="2.5" fill="#fff5e5" />
       </g>
     </svg>
   );

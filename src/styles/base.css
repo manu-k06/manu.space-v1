@@ -2,35 +2,32 @@
    MANU.SPACE — Design System & Base Styles
    ============================================ */
 
-/* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
-
 /* --- Design Tokens --- */
 :root {
   /* Backgrounds */
-  --bg-deep:      #0e0e0e;
-  --bg-surface:   #161616;
-  --bg-elevated:  #1c1c1c;
+  --bg-deep: #0e0e0e;
+  --bg-surface: #161616;
+  --bg-elevated: #1c1c1c;
 
   /* Text */
-  --text-primary:   #ffffff;
+  --text-primary: #ffffff;
   --text-secondary: #dcd8d4;
-  --text-dim:       #9a9590;
+  --text-dim: #9a9590;
 
   /* Accent */
-  --accent:        #c4b5a4;
-  --accent-dim:    rgba(196, 181, 164, 0.15);
+  --accent: #c4b5a4;
+  --accent-dim: rgba(196, 181, 164, 0.15);
 
   /* Typography */
   --font-serif: 'Cormorant Garamond', 'Georgia', serif;
-  --font-sans:  'Inter', -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
 
   /* Spacing */
-  --space-xs:  0.5rem;
-  --space-sm:  1rem;
-  --space-md:  2rem;
-  --space-lg:  4rem;
-  --space-xl:  6rem;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+  --space-xl: 6rem;
   --space-2xl: 10rem;
 
   /* Navigation Height */
@@ -93,7 +90,8 @@ a:hover {
   color: var(--text-primary);
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -111,17 +109,32 @@ button {
 }
 
 /* --- Typography --- */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: var(--font-serif);
   color: var(--text-primary);
   font-weight: 300;
   line-height: 1.15;
 }
 
-h1 { font-size: clamp(2.5rem, 6vw, 5rem); letter-spacing: 0.06em; }
-h2 { font-size: clamp(1.8rem, 4vw, 3rem);  letter-spacing: 0.04em; }
-h3 { font-size: clamp(1.2rem, 2.5vw, 1.6rem); letter-spacing: 0.02em; }
-h4 { font-size: 1.1rem; letter-spacing: 0.02em; }
+h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  letter-spacing: 0.06em;
+}
+h2 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: 0.04em;
+}
+h3 {
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  letter-spacing: 0.02em;
+}
+h4 {
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+}
 
 p {
   max-width: 60ch;
@@ -172,13 +185,22 @@ p {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes blinkCursor {
-  0%, 100% { border-color: var(--text-secondary); }
-  50%      { border-color: transparent; }
+  0%,
+  100% {
+    border-color: var(--text-secondary);
+  }
+  50% {
+    border-color: transparent;
+  }
 }
 
 /* Fade in class with auto-play or observer */
@@ -192,10 +214,18 @@ p {
 }
 
 /* Staggered animation utility classes */
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
+.delay-1 {
+  animation-delay: 0.1s;
+}
+.delay-2 {
+  animation-delay: 0.2s;
+}
+.delay-3 {
+  animation-delay: 0.3s;
+}
+.delay-4 {
+  animation-delay: 0.4s;
+}
 
 /* --- Scrollbar --- */
 ::-webkit-scrollbar {
@@ -222,6 +252,37 @@ p {
   }
 
   .section {
-    padding: var(--space-lg) 0;
+    padding: calc(var(--nav-height) + var(--space-md)) 0 var(--space-lg);
+  }
+}
+
+/* Keyboard navigation and motion preferences apply across routes. */
+:focus-visible {
+  outline: 2px solid #d8c6ae;
+  outline-offset: 5px;
+}
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 1rem;
+  z-index: 1000;
+  padding: 0.7rem 1rem;
+  background: #eee4d7;
+  color: #151515;
+  transform: translateY(-180%);
+}
+.skip-link:focus {
+  transform: translateY(0);
+  color: #151515;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }

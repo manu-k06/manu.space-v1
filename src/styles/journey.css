@@ -1,748 +1,318 @@
-/* ============================================
-   JOURNEY ROADMAP STYLES (Sleek, Compact & Aligned)
-   ============================================ */
-
+/* Content sets the layout; the decorative road is measured from it. */
 .journey-section {
   position: relative;
-  width: 100%;
-  overflow-x: hidden;
-  padding-bottom: var(--space-2xl);
+  isolation: isolate;
+  overflow: clip;
+  padding-bottom: 5rem;
 }
-
-/* ============================================
-   LIVING CELESTIAL BACKGROUND & LIVE ANIMATIONS
-   ============================================ */
-.celestial-canvas-wrap {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-  background: 
-    radial-gradient(ellipse 90% 45% at 50% 0%, rgba(196, 181, 164, 0.05) 0%, transparent 70%),
-    linear-gradient(180deg, rgba(14, 14, 14, 0.98) 0%, rgba(10, 10, 10, 1) 100%);
-}
-
-/* Three.js WebGL 3D Canvas Layer */
-.three-webgl-canvas,
 .live-galaxy-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.three-webgl-canvas canvas {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-  pointer-events: none;
-}
-
-/* Living Breathing Nebula Auroras (Silver & Monochrome) */
-.nebula-cloud {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-
-.nebula-cloud--top {
-  top: -150px;
-  left: 20%;
-  width: 750px;
-  height: 550px;
-  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(200, 210, 230, 0.02) 40%, rgba(140, 150, 170, 0.006) 65%, transparent 80%);
-  animation: floatNebulaTop 20s ease-in-out infinite alternate;
-}
-
-.nebula-cloud--mid-left {
-  top: 35%;
-  left: -200px;
-  width: 650px;
-  height: 650px;
-  background: radial-gradient(ellipse at 50% 50%, rgba(220, 225, 235, 0.04) 0%, rgba(160, 175, 195, 0.015) 45%, rgba(120, 130, 150, 0.005) 65%, transparent 80%);
-  animation: floatNebulaMid 24s ease-in-out infinite alternate;
-}
-
-.nebula-cloud--bottom-right {
-  bottom: 8%;
-  right: -150px;
-  width: 800px;
-  height: 600px;
-  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.04) 0%, rgba(180, 190, 210, 0.015) 50%, rgba(140, 150, 170, 0.005) 70%, transparent 85%);
-  animation: floatNebulaBottom 28s ease-in-out infinite alternate;
-}
-
-@keyframes floatNebulaTop {
-  0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translate(40px, 30px) scale(1.08);
-    opacity: 0.95;
-  }
-  100% {
-    transform: translate(-30px, 15px) scale(0.96);
-    opacity: 0.75;
-  }
-}
-
-@keyframes floatNebulaMid {
-  0% {
-    transform: translate(0, 0) scale(0.95);
-    opacity: 0.6;
-  }
-  50% {
-    transform: translate(30px, -40px) scale(1.1);
-    opacity: 0.85;
-  }
-  100% {
-    transform: translate(15px, 25px) scale(1);
-    opacity: 0.65;
-  }
-}
-
-@keyframes floatNebulaBottom {
-  0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.65;
-  }
-  50% {
-    transform: translate(-45px, -30px) scale(1.12);
-    opacity: 0.9;
-  }
-  100% {
-    transform: translate(20px, 20px) scale(0.94);
-    opacity: 0.7;
-  }
-}
-
-/* Starfield with Dynamic Twinkle */
-.starfield {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.celestial-star {
-  position: absolute;
-  border-radius: 50%;
-  will-change: opacity, transform;
-  animation-name: starTwinklePulse;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-
-@keyframes starTwinklePulse {
-  0%, 100% {
-    opacity: 0.2;
-    transform: scale(0.85);
-  }
-  50% {
-    opacity: 0.95;
-    transform: scale(1.25);
-  }
-}
-
-/* Periodic Cosmic Shooting Stars */
-.shooting-star {
-  position: absolute;
-  width: 110px;
-  height: 1.5px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(200, 205, 220, 0.45) 35%, transparent 100%);
-  border-radius: 999px;
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9));
-  opacity: 0;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-
-.shooting-star--1 {
-  top: 14%;
-  right: 18%;
-  transform: rotate(-32deg);
-  animation: meteorPass1 11s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
-  animation-delay: 2s;
-}
-
-.shooting-star--2 {
-  top: 56%;
-  right: 28%;
-  width: 90px;
-  transform: rotate(-28deg);
-  animation: meteorPass2 16s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
-  animation-delay: 7.5s;
-}
-
-@keyframes meteorPass1 {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0) rotate(-32deg) scale(0.6);
-  }
-  3% {
-    opacity: 0.9;
-  }
-  8% {
-    opacity: 0;
-    transform: translate(-380px, 240px) rotate(-32deg) scale(1.1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-380px, 240px) rotate(-32deg) scale(1.1);
-  }
-}
-
-@keyframes meteorPass2 {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0) rotate(-28deg) scale(0.6);
-  }
-  2.5% {
-    opacity: 0.85;
-  }
-  6.5% {
-    opacity: 0;
-    transform: translate(-320px, 180px) rotate(-28deg) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-320px, 180px) rotate(-28deg) scale(1);
-  }
-}
-
-/* Road Container */
-.mountain-roadmap-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 1000px;
-  height: 2750px;
-  margin: 0 auto;
-  z-index: 2;
-}
-
-/* Desktop Switchback SVG Canvas */
-.switchback-svg-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2400px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.switchback-svg-canvas .waypoint-group {
-  pointer-events: auto;
-  cursor: pointer;
-}
-
-/* Road Path SVG Styles */
-.road-curb {
-  stroke: rgba(60, 56, 52, 0.55);
-  stroke-width: 42px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-}
-
-.road-asphalt {
-  stroke: #161514;
-  stroke-width: 34px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-  filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.8));
-}
-
-.road-centerline {
-  stroke: rgba(220, 216, 212, 0.55);
-  stroke-width: 2.5px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 12 16;
-  fill: none;
-  animation: roadForwardDash 2.5s linear infinite;
-}
-
-@keyframes roadForwardDash {
-  to {
-    stroke-dashoffset: -28;
-  }
-}
-
-/* Traveled Road Illuminated Line */
-.road-traveled-light {
-  stroke: rgba(255, 255, 255, 0.75);
-  stroke-width: 3.5px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(196, 181, 164, 0.4));
-  pointer-events: none;
-}
-
-/* Traveling Starlight Beacon */
-.traveler-beacon-glow {
-  will-change: transform;
-}
-
-.traveler-beacon-core {
-  fill: #ffffff;
-  filter: drop-shadow(0 0 8px #ffffff);
-}
-
-/* Waypoint SVG Node */
-.waypoint-group {
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.4, 1);
-}
-
-.waypoint-group:hover,
-.waypoint-group--active {
-  transform-origin: center;
-}
-
-.waypoint-node-ring {
-  fill: none;
-  stroke: rgba(196, 181, 164, 0.35);
-  stroke-width: 2px;
-  animation: pulseBeaconRing 2.4s ease-out infinite;
-  transform-origin: center;
-  transition: r 0.25s ease, stroke 0.25s ease;
-}
-
-.waypoint-group:hover .waypoint-node-ring,
-.waypoint-group--active .waypoint-node-ring {
-  stroke: rgba(255, 255, 255, 0.90);
-  animation-duration: 1.2s;
-}
-
-.waypoint-node-disk {
-  fill: #141414;
-  stroke: var(--accent);
-  stroke-width: 2px;
-  filter: drop-shadow(0 0 8px rgba(196, 181, 164, 0.3));
-  transition: r 0.25s ease, fill 0.25s ease, stroke 0.25s ease, filter 0.25s ease;
-}
-
-.waypoint-group:hover .waypoint-node-disk,
-.waypoint-group--active .waypoint-node-disk {
-  stroke: #ffffff;
-  fill: var(--accent);
-  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 28px rgba(196, 181, 164, 0.5));
-}
-
-.waypoint-node-number {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  fill: #ffffff;
-  text-anchor: middle;
-  dominant-baseline: central;
-  transition: fill 0.2s ease;
-}
-
-/* Milestone Cards Container */
-.milestones-flow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 4;
-}
-
-/* Individual Milestone Row */
-.milestone-row {
-  position: absolute;
-  pointer-events: auto;
-  z-index: 5;
-  width: auto;
-}
-
-/* Milestone 01: Next to Checkpoint 01 (x: 220, y: 440) on inner curve shoulder */
-.milestone-row--01 {
-  top: 420px;
-  left: 320px;
-}
-
-/* Milestone 02: Next to Checkpoint 02 (x: 780, y: 960) on right mountain flank */
-.milestone-row--02 {
-  top: 1090px;
-  right: 10px;
-}
-
-/* Milestone 03: Next to Checkpoint 03 (x: 220, y: 1500) on left mountain flank */
-.milestone-row--03 {
-  top: 1600px;
-  left: 10px;
-}
-
-/* Milestone 04: Next to Checkpoint 04 (x: 760, y: 1980) on right mountain flank */
-.milestone-row--04 {
-  top: 2060px;
-  right: 15px;
-}
-
-/* Milestone 05: Directly centered below Summit Peak Checkpoint 05 (x: 500, y: 2320) */
-.milestone-row--05 {
-  top: 2440px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Milestone Frosted Glass Card (Compact, Refined, Non-Bulky) */
-.mountain-card {
-  position: relative;
-  width: 320px;
-  max-width: 320px;
-  background: rgba(18, 17, 16, 0.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-  padding: 1.15rem 1.35rem;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
-  transition: transform var(--transition-base),
-              border-color var(--transition-base),
-              background var(--transition-base),
-              box-shadow var(--transition-base);
-  z-index: 5;
-}
-
-.mountain-card:hover,
-.mountain-card--active {
-  background: rgba(26, 24, 22, 0.98);
-  border-color: rgba(255, 255, 255, 0.85);
-  transform: translateY(-3px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(196, 181, 164, 0.2);
-}
-
-.mountain-card--summit {
-  border-color: rgba(196, 181, 164, 0.28);
-  background: rgba(22, 20, 18, 0.96);
-  text-align: center;
-  width: 330px;
-  max-width: 330px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 24px rgba(196, 181, 164, 0.1);
-}
-
-.mountain-card--summit .card-header-meta {
-  justify-content: center;
-}
-
-.mountain-card--summit .card-tags,
-.mountain-card--summit .card-project-links {
-  justify-content: center;
-}
-
-/* Card Header */
-.card-header-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.card-step-badge {
-  font-family: var(--font-sans);
-  font-size: 0.65rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: rgba(196, 181, 164, 0.1);
-  padding: 0.18rem 0.45rem;
-  border-radius: 2px;
-  border: 1px solid rgba(196, 181, 164, 0.18);
-  white-space: nowrap;
-}
-
-.card-category {
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-/* Card Content */
-.card-title {
-  font-size: 1.22rem;
-  line-height: 1.25;
-  color: var(--text-primary);
-  margin-bottom: 0.35rem;
-}
-
-.card-desc {
-  font-size: 0.84rem;
-  line-height: 1.55;
-  color: var(--text-secondary);
-  margin-bottom: 0.75rem;
-}
-
-/* Tag Pills */
-.card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-  margin-bottom: 0.2rem;
-}
-
-.tag-pill {
-  font-size: 0.65rem;
-  letter-spacing: 0.05em;
-  padding: 0.15rem 0.45rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 2px;
-  color: var(--text-secondary);
-  transition: color var(--transition-fast), border-color var(--transition-fast);
-}
-
-.mountain-card:hover .tag-pill {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.16);
-}
-
-/* Project Links inside Milestones */
-.card-project-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.65rem;
-  padding-top: 0.65rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.project-link-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.28rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.04em;
-  color: var(--text-primary);
-  background: rgba(196, 181, 164, 0.1);
-  border: 1px solid rgba(196, 181, 164, 0.22);
-  padding: 0.22rem 0.6rem;
-  border-radius: 2px;
-  transition: background var(--transition-fast),
-              border-color var(--transition-fast),
-              color var(--transition-fast);
-}
-
-.project-link-chip:hover {
-  background: rgba(196, 181, 164, 0.25);
-  border-color: var(--accent);
-  color: #ffffff;
-}
-
-.project-link-arrow {
-  font-size: 0.72rem;
-  transition: transform var(--transition-fast);
-}
-
-.project-link-chip:hover .project-link-arrow {
-  transform: translate(2px, -2px);
-}
-
-/* Keyframes */
-@keyframes pulseBeaconRing {
-  0% {
-    r: 16px;
-    opacity: 0.8;
-  }
-  100% {
-    r: 32px;
-    opacity: 0;
-  }
-}
-
-/* ============================================
-   RESPONSIVENESS (Tablets & Mobile)
-   ============================================ */
-@media (max-width: 900px) {
-  .mountain-roadmap-wrap {
-    height: auto;
-  }
-
-  .switchback-svg-canvas {
-    display: none;
-  }
-
-  .milestones-flow {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 100%;
-    height: auto;
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-    padding: 1rem 0;
-    border-left: 2px dashed rgba(196, 181, 164, 0.25);
-    margin-left: 0.8rem;
-    padding-left: 1.5rem;
-  }
-
-  .milestone-row {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-    width: 100%;
-    display: flex;
-  }
-
-  .milestone-row--left,
-  .milestone-row--right,
-  .milestone-row--summit {
-    justify-content: flex-start;
-    padding: 0;
-  }
-
-  .mountain-card {
-    width: 100%;
-    max-width: 100%;
-    padding: 1.15rem 1.3rem;
-  }
-
-  .mountain-card--summit {
-    text-align: left;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .mountain-card--summit .card-header-meta,
-  .mountain-card--summit .card-tags,
-  .mountain-card--summit .card-project-links {
-    justify-content: flex-start;
-  }
-
-  /* Node dot on the left timeline on mobile */
-  .mountain-card::before {
-    content: '';
-    position: absolute;
-    left: -2.15rem;
-    top: 1.4rem;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #141414;
-    border: 2px solid var(--accent);
-    box-shadow: 0 0 8px rgba(196, 181, 164, 0.4);
-  }
-}
-
-/* ============================================
-   LIVE IN-BROWSER CARD CALIBRATION TOOLBAR
-   ============================================ */
-.journey-editor-toolbar {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(18, 17, 16, 0.95);
-  border: 1px solid rgba(196, 181, 164, 0.35);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8), 0 0 16px rgba(196, 181, 164, 0.15);
-  animation: fadeInToolbar 0.3s ease;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
 }
-
-@keyframes fadeInToolbar {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.journey-content {
+  position: relative;
 }
-
-.journey-editor-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all var(--transition-fast);
+.journey-header {
+  padding: 2rem 0 2.5rem;
+  max-width: 100%;
 }
-
-.journey-editor-btn:hover {
-  background: rgba(196, 181, 164, 0.2);
-  border-color: var(--accent);
-  color: #ffffff;
-}
-
-.journey-editor-btn--primary {
-  background: var(--accent);
-  color: #0c0b0a;
-  border-color: var(--accent);
-  font-weight: 600;
-}
-
-.journey-editor-btn--primary:hover {
-  background: #d8c9b8;
-  color: #000000;
-}
-
-/* Card Drag Handle when Edit Mode is active */
-.card-drag-indicator {
+.journey-eyebrow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.35rem 0.65rem;
-  margin-bottom: 0.45rem;
-  font-family: var(--font-sans);
+  gap: 1rem;
+}
+.journey-header h1 {
+  font-size: clamp(2.5rem, 5.5vw, 4.7rem);
+  letter-spacing: -0.025em;
+  margin: 1.2rem 0;
+}
+.journey-header p {
+  max-width: 36ch;
+  font-size: 1rem;
+}
+.sky-toggle {
+  font-size: 0.75rem;
+  min-height: 44px;
+  padding: 0.5rem 0.8rem;
+  color: var(--text-dim);
+  border: 1px solid #ffffff20;
+  border-radius: 999px;
+}
+.sky-toggle:hover {
+  color: #fff;
+  border-color: #c4b5a480;
+}
+.journey-current-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  min-height: 44px;
+  font-size: 0.8rem;
+}
+.mountain-roadmap-wrap {
+  position: relative;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+.milestones-flow {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 2rem 0 1rem;
+}
+.milestone-row {
+  width: 42%;
+  position: relative;
+}
+.milestone-row:nth-child(even) {
+  align-self: flex-end;
+}
+.switchback-svg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.road-curb {
+  fill: none;
+  stroke: #c4b5a417;
+  stroke-width: 20;
+  stroke-linecap: round;
+}
+.road-asphalt {
+  fill: none;
+  stroke: #151617;
+  stroke-width: 16;
+  stroke-linecap: round;
+}
+.road-centerline {
+  fill: none;
+  stroke: #c4b5a440;
+  stroke-width: 1;
+  stroke-dasharray: 3 8;
+}
+.road-traveled-light {
+  fill: none;
+  stroke: #c4b5a4a0;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+.waypoint-node-disk {
+  fill: #141414;
+  stroke: #74695d;
+  stroke-width: 1;
+  transition:
+    stroke 0.2s,
+    fill 0.2s;
+}
+.waypoint-group--active .waypoint-node-disk {
+  fill: #302a24;
+  stroke: #e2d8ca;
+}
+.waypoint-node-number {
+  font: 10px var(--font-sans);
+  fill: #ded7cd;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.mountain-card {
+  position: relative;
+  width: 100%;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  background: linear-gradient(135deg, #18191bf5, #121314f5);
+  border: 1px solid #ffffff15;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px #00000018;
+  scroll-margin-top: calc(var(--nav-height) + 2rem);
+  transition:
+    border-color 0.25s,
+    background 0.25s;
+}
+.mountain-card:hover,
+.mountain-card--active {
+  border-color: #c4b5a466;
+  background: #1a1b1df5;
+}
+.mountain-card--summit {
+  border-color: #c4b5a459;
+  background: linear-gradient(140deg, #25221ef5, #151617f5);
+}
+.card-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.8rem;
+  margin-bottom: 1rem;
+}
+.card-step-badge {
+  font-size: 0.73rem;
+  letter-spacing: 0.07em;
+  color: #d6c7b4;
+  white-space: nowrap;
+}
+.card-category {
   font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  background: rgba(196, 181, 164, 0.18);
-  border: 1px dashed var(--accent);
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #aaa6a1;
+}
+.card-title {
+  font-size: clamp(1.65rem, 2.4vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.85rem;
+}
+.card-desc {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: #c9c8c6;
+}
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1.2rem;
+}
+.tag-pill {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  color: #aaa9a6;
+  border: 1px solid #ffffff13;
   border-radius: 3px;
-  color: var(--accent);
-  cursor: grab;
-  user-select: none;
 }
-
-.card-drag-indicator:active {
-  cursor: grabbing;
-  background: rgba(196, 181, 164, 0.35);
+.card-project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  border-top: 1px solid #ffffff12;
+  margin-top: 1.2rem;
+  padding-top: 0.7rem;
 }
-
-.card-drag-coords {
-  color: #ffffff;
-  font-family: monospace;
-  font-size: 0.68rem;
+.project-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-size: 0.8rem;
+  color: #ded3c4;
 }
-
-.mountain-roadmap-wrap--editing .mountain-card {
-  box-shadow: 0 0 0 1px var(--accent), 0 16px 36px rgba(0, 0, 0, 0.85);
+.project-link-chip:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.journey-outro {
+  margin-top: 4rem;
+  border-top: 1px solid #ffffff17;
+  padding: 3rem 0 0;
+}
+.journey-outro h2 {
+  margin: 1rem 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.02em;
+}
+.journey-outro p {
+  color: var(--text-dim);
+}
+.journey-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.journey-action {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid #c4b5a440;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+.journey-action--primary {
+  background: #c4b5a4;
+  color: #171513;
+}
+.journey-action--primary:hover {
+  background: #dfd0be;
+  color: #171513;
+}
+@media (max-width: 1000px) {
+  .switchback-svg-canvas {
+    display: none;
+  }
+  .milestones-flow {
+    padding: 0 0 0 1.5rem;
+    gap: 1.5rem;
+    border-left: 1px solid #c4b5a43d;
+    margin-left: 0.35rem;
+  }
+  .milestone-row {
+    width: 100%;
+  }
+  .milestone-row::before {
+    content: '';
+    position: absolute;
+    left: -1.85rem;
+    top: 2.25rem;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #c4b5a4;
+    border-radius: 50%;
+    background: #111;
+  }
+  .mountain-roadmap-wrap {
+    max-width: 680px;
+  }
+  .journey-header {
+    padding-top: 1rem;
+  }
+}
+@media (max-width: 600px) {
+  .journey-header {
+    padding-bottom: 2rem;
+  }
+  .journey-header h1 {
+    max-width: 10ch;
+  }
+  .journey-header p {
+    max-width: 29ch;
+  }
+  .journey-eyebrow .label {
+    font-size: 0.65rem;
+  }
+  .sky-toggle {
+    font-size: 0.7rem;
+  }
+  .milestones-flow {
+    padding-left: 1rem;
+  }
+  .milestone-row::before {
+    left: -1.35rem;
+  }
+  .mountain-card {
+    padding: 1.25rem;
+  }
+  .card-desc {
+    font-size: 0.94rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky-toggle {
+    display: none;
+  }
+  .mountain-card,
+  .waypoint-node-disk {
+    transition: none;
+  }
 }
