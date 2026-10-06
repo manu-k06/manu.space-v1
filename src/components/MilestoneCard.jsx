@@ -47,18 +47,18 @@ export function MilestoneCard({
           Read the story
         </summary>
         <p className="card-desc">{milestone.description}</p>
-
-        {/* Key Focus Tags */}
-        {milestone.tags && milestone.tags.length > 0 && (
-          <div className="card-tags">
-            {milestone.tags.map((tag) => (
-              <span key={tag} className="tag-pill">
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
       </details>
+
+      {/* Key Focus Tags */}
+      {milestone.tags && milestone.tags.length > 0 && (
+        <div className="card-tags">
+          {milestone.tags.map((tag) => (
+            <span key={tag} className="tag-pill">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Shipped Projects Links */}
       {milestone.projects && milestone.projects.length > 0 && (

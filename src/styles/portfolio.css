@@ -254,3 +254,115 @@
 .contact-section {
   min-height: calc(100svh - var(--nav-height) - 16px);
 }
+
+/* Give each galaxy an actual place in the composition, clear of cards and copy. */
+.celestial-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 2rem;
+}
+.celestial-intro-copy {
+  padding: 1rem 0;
+}
+.galaxy-window {
+  min-width: 0;
+  margin: 0;
+  position: relative;
+}
+.galaxy-stage {
+  height: clamp(240px, 23vw, 330px);
+}
+.galaxy-window figcaption {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 32px;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.galaxy-window figcaption span {
+  color: var(--accent);
+}
+.journey-chapters {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-block: 1px solid #c4b5a429;
+  margin-top: 2rem;
+}
+.journey-chapters a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 0.85rem;
+  min-height: 76px;
+  border-inline-start: 1px solid #c4b5a417;
+}
+.journey-chapters a:first-child {
+  border-inline-start: 0;
+}
+.journey-chapters a:hover {
+  background: #c4b5a40b;
+}
+.chapter-year {
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+.chapter-name {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  line-height: 1.25;
+  color: var(--text-secondary);
+}
+.galaxy-window--trail {
+  position: absolute;
+  top: 0;
+  left: 138.1%;
+  width: 100%;
+}
+.galaxy-window--trail .galaxy-stage {
+  height: 250px;
+}
+.mountain-card .card-tags {
+  margin-top: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+@media (max-width: 1000px) {
+  .galaxy-window--trail {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    margin-block: 1.5rem 0;
+  }
+  .galaxy-window--trail .galaxy-stage {
+    height: 200px;
+  }
+}
+@media (max-width: 650px) {
+  .celestial-intro {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .galaxy-stage {
+    height: 230px;
+  }
+  .galaxy-window {
+    margin-bottom: 1rem;
+  }
+  .journey-chapters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 1rem;
+  }
+  .journey-chapters a {
+    border-bottom: 1px solid #c4b5a417;
+  }
+  .journey-chapters a:last-child {
+    grid-column: 1 / -1;
+    border-inline-start: 0;
+  }
+}

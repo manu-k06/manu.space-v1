@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { journeyMilestones } from '../data/journeyData';
 import { MountainRoad } from '../components/MountainRoad';
+import { GalaxyWindow } from '../components/GalaxyWindow';
 import { MilestoneCard } from '../components/MilestoneCard';
 import '../styles/journey.css';
 
@@ -30,13 +31,29 @@ export function Journey({ paused, onToggleMotion }) {
               {paused ? 'Resume space animation' : 'Pause space animation'}
             </button>
           </div>
-          <h2 id="journey-title">A steady exposure.</h2>
-          <p>
-            The milestones, detours, and orbits that shaped the path so far.
-          </p>
-          <Link className="journey-current-link" to="/#milestone-current-orbit">
-            Jump to my current orbit <span aria-hidden="true">↓</span>
-          </Link>
+          <div className="celestial-intro">
+            <div className="celestial-intro-copy">
+              <h2 id="journey-title">A steady exposure.</h2>
+              <p>
+                The milestones, detours, and orbits that shaped the path so far.
+              </p>
+              <Link
+                className="journey-current-link"
+                to="/#milestone-current-orbit"
+              >
+                Jump to my current orbit <span aria-hidden="true">↓</span>
+              </Link>
+            </div>
+            <GalaxyWindow galaxy="galaxy2" label="A companion in orbit" />
+          </div>
+          <nav className="journey-chapters" aria-label="Journey milestones">
+            {journeyMilestones.map((milestone) => (
+              <Link key={milestone.id} to={`/#milestone-${milestone.id}`}>
+                <span className="chapter-year">{milestone.year}</span>
+                <span className="chapter-name">{milestone.title}</span>
+              </Link>
+            ))}
+          </nav>
         </header>
         <div ref={containerRef} className="mountain-roadmap-wrap">
           <MountainRoad
@@ -62,6 +79,13 @@ export function Journey({ paused, onToggleMotion }) {
                       setFocusedStep(null);
                   }}
                 />
+                {milestone.step === '03' && (
+                  <GalaxyWindow
+                    galaxy="galaxy3"
+                    label="A little further into the unknown"
+                    className="galaxy-window--trail"
+                  />
+                )}
               </li>
             ))}
           </ol>

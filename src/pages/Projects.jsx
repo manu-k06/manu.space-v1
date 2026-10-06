@@ -1,5 +1,6 @@
 import React from 'react';
 import { projects } from '../data/projectsData';
+import { GalaxyWindow } from '../components/GalaxyWindow';
 import { ProjectCard } from '../components/ProjectCard';
 
 export function Projects({ paused, onToggleMotion }) {
@@ -23,10 +24,16 @@ export function Projects({ paused, onToggleMotion }) {
               {paused ? 'Resume space animation' : 'Pause space animation'}
             </button>
           </div>
-          <h2 id="projects-title">Ideas, made real.</h2>
-          <p>
-            Web apps, games, and AI tools. A few things I’ve built and shipped.
-          </p>
+          <div className="celestial-intro">
+            <div className="celestial-intro-copy">
+              <h2 id="projects-title">Ideas, made real.</h2>
+              <p>
+                Web apps, games, and AI tools. A few things I’ve built and
+                shipped.
+              </p>
+            </div>
+            <GalaxyWindow galaxy="galaxy1" label="The spiral beyond" />
+          </div>
         </header>
         <div className="projects-grid">
           {projects.slice(0, 3).map((project) => (

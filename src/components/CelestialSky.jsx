@@ -44,12 +44,31 @@ export function CelestialSky({ paused = false }) {
     let cachedNucleusGrad2 = null;
     let cachedCoreGrad3 = null;
 
+    // Layout-owned viewing areas keep the animated subjects out of card/text bounds.
+    const anchorElements = ['galaxy1', 'galaxy2', 'galaxy3'].map((name) =>
+      wrapper.parentElement.querySelector(`[data-galaxy="${name}"]`)
+    );
+    let galaxyLayout = [
+      { x: 0, y: 0, radius: 1 },
+      { x: 0, y: 0, radius: 1 },
+      { x: 0, y: 0, radius: 1 },
+    ];
+    const measureGalaxies = () => {
+      const origin = wrapper.getBoundingClientRect();
+      galaxyLayout = anchorElements.map((element) => {
+        if (!element) return { x: 0, y: 0, radius: 1 };
+        const rect = element.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2 - origin.left,
+          y: rect.top + rect.height / 2 - origin.top,
+          radius: Math.max(1, Math.min(rect.width * 0.43, rect.height * 0.57)),
+        };
+      });
+    };
+
     // Galaxy 1: Primary Grand Spiral Galaxy (Upper Right)
     const g1 = {
-      getCenter: (w, h) => ({
-        x: w > 900 ? w * 0.78 : w * 0.72,
-        y: Math.min(h * 0.14, 380),
-      }),
+      getCenter: () => galaxyLayout[0],
       arms: 2,
       armSpread: 0.44,
       tiltRatio: 0.58,
@@ -61,10 +80,7 @@ export function CelestialSky({ paused = false }) {
     // Galaxy 2: Companion 3-Arm Pinwheel Spiral Galaxy (Mid-Right Pass)
     // Distinct from Galaxy 1: 3 sweeping arms, clockwise counter-rotation, complementary 3D tilt
     const g2 = {
-      getCenter: (w, h) => ({
-        x: w > 900 ? w * 0.82 : w * 0.78,
-        y: Math.min(Math.max(h * 0.46, 800), 1250),
-      }),
+      getCenter: () => galaxyLayout[1],
       arms: 3,
       armSpread: 0.48,
       tiltRatio: 0.5,
@@ -75,10 +91,7 @@ export function CelestialSky({ paused = false }) {
 
     // Galaxy 3: Globular Satellite Cluster (Lower Left)
     const g3 = {
-      getCenter: (w, h) => ({
-        x: w > 900 ? w * 0.16 : w * 0.22,
-        y: h * 0.74,
-      }),
+      getCenter: () => galaxyLayout[2],
       maxRadius: 210,
       baseSpeed: -0.00045,
     };
@@ -89,9 +102,9 @@ export function CelestialSky({ paused = false }) {
       comets = [];
 
       // Calculate responsive dimensions
-      g1.maxRadius = Math.min(Math.max(w * 0.32, 240), 380);
-      g2.maxRadius = Math.min(Math.max(w * 0.24, 180), 280);
-      g3.maxRadius = Math.min(Math.max(w * 0.18, 140), 220);
+      g1.maxRadius = galaxyLayout[0].radius;
+      g2.maxRadius = galaxyLayout[1].radius;
+      g3.maxRadius = galaxyLayout[2].radius;
 
       // Pre-compile radial gradients once during resize/init
       const coreR1 = g1.maxRadius * 0.65;
@@ -296,6 +309,7 @@ export function CelestialSky({ paused = false }) {
       ctx.resetTransform?.() || ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
 
+      measureGalaxies();
       initSimulation(width, height);
       updateViewport();
       wake();
@@ -643,6 +657,12 @@ export function CelestialSky({ paused = false }) {
     };
     const resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(wrapper);
+    anchorElements.forEach((element) => {
+      if (element) resizeObserver.observe(element);
+    });
+    wrapper.parentElement
+      .querySelectorAll('section')
+      .forEach((element) => resizeObserver.observe(element));
     const observer = new IntersectionObserver(([entry]) => {
       inView = entry.isIntersecting;
       wake();
