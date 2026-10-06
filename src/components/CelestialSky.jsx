@@ -24,6 +24,9 @@ export function CelestialSky({ paused = false }) {
     let previousTime = 0;
     let viewportHeight = window.innerHeight;
     let sceneTop = 0;
+    let canvasTop = 0;
+    const overscan = 180;
+    let initialized = false;
     let width = 0;
     let height = 0;
     // Match the original particle appearance without a full-page backing buffer.
@@ -96,11 +99,12 @@ export function CelestialSky({ paused = false }) {
       baseSpeed: -0.00045,
     };
 
-    const initSimulation = (w, h) => {
-      particles = [];
-      fieldStars = [];
-      comets = [];
-
+    const updateGalaxySizes = () => {
+      const previousRadii = {
+        galaxy1: g1.maxRadius,
+        galaxy2: g2.maxRadius,
+        galaxy3: g3.maxRadius,
+      };
       // Calculate responsive dimensions
       g1.maxRadius = galaxyLayout[0].radius;
       g2.maxRadius = galaxyLayout[1].radius;
@@ -152,6 +156,18 @@ export function CelestialSky({ paused = false }) {
       cachedCoreGrad3.addColorStop(0.7, 'rgba(140, 150, 170, 0.02)');
       cachedCoreGrad3.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
+      // Keep every particle's identity and angular position through layout changes.
+      const radii = {
+        galaxy1: g1.maxRadius,
+        galaxy2: g2.maxRadius,
+        galaxy3: g3.maxRadius,
+      };
+      particles.forEach((particle) => {
+        particle.r *= radii[particle.type] / previousRadii[particle.type];
+      });
+    };
+
+    const initSimulation = (w) => {
       // ------------------------------------------
       // 1. Generate Galaxy 1 Spiral Particles (580 particles, 2-Arm Grand Design)
       // ------------------------------------------
@@ -166,8 +182,9 @@ export function CelestialSky({ paused = false }) {
         } else {
           const armIndex = i % g1.arms;
           const armOffset = (armIndex * (2 * Math.PI)) / g1.arms;
-          r = Math.pow(Math.random(), 0.92) * g1.maxRadius + 14;
-          const spiralAngle = Math.log(r / 14) * 1.85;
+          // Define the arms in proportions of the disc, not fixed pixel radii.
+          r = (0.12 + Math.pow(Math.random(), 0.92) * 0.84) * g1.maxRadius;
+          const spiralAngle = Math.log(r / (g1.maxRadius * 0.12)) * 1.85;
           const scatter =
             (Math.random() - 0.5) * g1.armSpread * (r / g1.maxRadius + 0.18);
           theta = armOffset + spiralAngle + scatter;
@@ -177,7 +194,7 @@ export function CelestialSky({ paused = false }) {
           type: 'galaxy1',
           r,
           theta,
-          speed: (0.16 / (Math.sqrt(r) + 4)) * g1.baseSpeed * 320,
+          speed: g1.baseSpeed,
           size:
             Math.random() < 0.08
               ? 2.0 + Math.random() * 0.9
@@ -234,7 +251,7 @@ export function CelestialSky({ paused = false }) {
           type: 'galaxy2',
           r,
           theta,
-          speed: (0.15 / (Math.sqrt(r) + 4.2)) * g2.baseSpeed * 300,
+          speed: g2.baseSpeed,
           size: isDust
             ? Math.random() * 2.2 + 3.4
             : isStarburst
@@ -300,17 +317,24 @@ export function CelestialSky({ paused = false }) {
       width = canvas.parentElement.clientWidth;
       height = canvas.parentElement.clientHeight;
 
-      canvas.width = width * dpr;
       viewportHeight = window.innerHeight;
-      canvas.height = viewportHeight * dpr;
+      const bufferWidth = Math.round(width * dpr);
+      const bufferHeight = Math.round((viewportHeight + overscan * 2) * dpr);
+      // Assigning either canvas dimension clears its contents and drawing state.
+      if (canvas.width !== bufferWidth) canvas.width = bufferWidth;
+      if (canvas.height !== bufferHeight) canvas.height = bufferHeight;
       canvas.style.width = `${width}px`;
-      canvas.style.height = `${viewportHeight}px`;
-
-      ctx.resetTransform?.() || ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
+      canvas.style.height = `${viewportHeight + overscan * 2}px`;
 
       measureGalaxies();
-      initSimulation(width, height);
+      const sizeChanged = [g1, g2, g3].some(
+        (galaxy, index) => galaxy.maxRadius !== galaxyLayout[index].radius
+      );
+      if (!initialized || sizeChanged) updateGalaxySizes();
+      if (!initialized) {
+        initSimulation(width);
+        initialized = true;
+      }
       updateViewport();
       wake();
     };
@@ -324,8 +348,9 @@ export function CelestialSky({ paused = false }) {
     const updateViewport = () => {
       if (!canvas) return;
       sceneTop = wrapper.getBoundingClientRect().top;
-      viewTop = Math.max(0, -sceneTop) - 180;
-      viewBottom = viewTop + window.innerHeight + 360;
+      canvasTop = Math.max(0, Math.floor(-sceneTop) - overscan);
+      viewTop = canvasTop;
+      viewBottom = canvasTop + viewportHeight + overscan * 2;
     };
 
     // ==========================================
@@ -364,18 +389,15 @@ export function CelestialSky({ paused = false }) {
     const render = (delta = 0) => {
       time += delta;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, width, viewportHeight);
+      // The tile belongs to the document, so browser/compositor scrolling moves
+      // it with the cards even before a new JS animation frame is available.
+      canvas.style.transform = `translateY(${canvasTop}px)`;
+      ctx.clearRect(0, 0, width, viewportHeight + overscan * 2);
       ctx.save();
+      ctx.translate(0, -canvasTop);
       ctx.beginPath();
-      const top = Math.max(0, sceneTop);
-      ctx.rect(
-        0,
-        top,
-        width,
-        Math.max(0, Math.min(viewportHeight, sceneTop + height) - top)
-      );
+      ctx.rect(0, 0, width, height);
       ctx.clip();
-      ctx.translate(0, sceneTop);
 
       const c1 = g1.getCenter(width, height);
       const c2 = g2.getCenter(width, height);
@@ -392,6 +414,8 @@ export function CelestialSky({ paused = false }) {
       ) {
         ctx.save();
         ctx.translate(c1.x, c1.y);
+        ctx.rotate(g1.tiltAngle);
+        ctx.scale(1, g1.tiltRatio);
         ctx.fillStyle = cachedCoreGrad1;
         ctx.beginPath();
         ctx.arc(0, 0, coreR1, 0, Math.PI * 2);
@@ -574,7 +598,11 @@ export function CelestialSky({ paused = false }) {
       // ------------------------------------------
       // 6. Active Multi-Comet System (Frequent & Luminous)
       // ------------------------------------------
-      if (Math.random() < 1 - Math.pow(1 - 0.024, delta) && comets.length < 4) {
+      if (
+        delta > 0 &&
+        comets.length < 4 &&
+        Math.random() < 1 - Math.pow(1 - 0.024, delta)
+      ) {
         spawnComet();
       }
 
