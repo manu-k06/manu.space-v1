@@ -56,8 +56,14 @@ export function CelestialSky({ paused = false }) {
       { x: 0, y: 0, radius: 1 },
       { x: 0, y: 0, radius: 1 },
     ];
+    const journeyElement = wrapper.parentElement.querySelector('#journey');
+    let journeyBounds = { top: 0, height: 0 };
     const measureGalaxies = () => {
       const origin = wrapper.getBoundingClientRect();
+      if (journeyElement) {
+        const rect = journeyElement.getBoundingClientRect();
+        journeyBounds = { top: rect.top - origin.top, height: rect.height };
+      }
       galaxyLayout = anchorElements.map((element) => {
         if (!element) return { x: 0, y: 0, radius: 1 };
         const rect = element.getBoundingClientRect();
@@ -72,7 +78,7 @@ export function CelestialSky({ paused = false }) {
     // Galaxy 1: Primary Grand Spiral Galaxy (Upper Right)
     const g1 = {
       getCenter: () => galaxyLayout[0],
-      arms: 2,
+      arms: 3,
       armSpread: 0.44,
       tiltRatio: 0.58,
       tiltAngle: -0.42,
@@ -169,9 +175,9 @@ export function CelestialSky({ paused = false }) {
 
     const initSimulation = (w) => {
       // ------------------------------------------
-      // 1. Generate Galaxy 1 Spiral Particles (580 particles, 2-Arm Grand Design)
+      // 1. Generate Galaxy 1 Spiral Particles (Three-arm grand design)
       // ------------------------------------------
-      const numG1 = w > 900 ? 580 : 350;
+      const numG1 = w > 900 ? 810 : 480;
       for (let i = 0; i < numG1; i++) {
         const isCore = Math.random() < 0.26;
         let r, theta;
@@ -296,16 +302,18 @@ export function CelestialSky({ paused = false }) {
       }
 
       // ------------------------------------------
-      // 4. Ambient Background Field Stars (100 stars)
+      // 4. Ambient stars with an additional field anchored to Journey
       // ------------------------------------------
-      const numField = 100;
-      for (let i = 0; i < numField; i++) {
+      const numField = w > 900 ? 480 : 240;
+      const journeyCount = w > 900 ? 200 : 120;
+      for (let i = 0; i < numField + journeyCount; i++) {
         fieldStars.push({
+          journey: i >= numField,
           x: Math.random(),
           y: Math.random(),
           size: Math.random() < 0.12 ? 2.0 : Math.random() < 0.4 ? 1.3 : 0.8,
-          alpha: Math.random() * 0.55 + 0.25,
-          twinkleSpeed: 0.01 + Math.random() * 0.025,
+          alpha: Math.random() * 0.4 + 0.4,
+          twinkleSpeed: 0.008 + Math.random() * 0.012,
           twinklePhase: Math.random() * Math.PI * 2,
           isSilver: Math.random() < 0.4,
         });
@@ -489,11 +497,13 @@ export function CelestialSky({ paused = false }) {
       // ------------------------------------------
       for (let i = 0; i < fieldStars.length; i++) {
         const s = fieldStars[i];
-        const sy = s.y * height;
+        const sy = s.journey
+          ? journeyBounds.top + s.y * journeyBounds.height
+          : s.y * height;
         if (sy < viewTop || sy > viewBottom) continue;
 
         const twinkle =
-          Math.sin(time * s.twinkleSpeed + s.twinklePhase) * 0.35 + 0.65;
+          Math.sin(time * s.twinkleSpeed + s.twinklePhase) * 0.22 + 0.78;
         const alpha = Math.max(0, Math.min(1, s.alpha * twinkle));
 
         ctx.globalAlpha = alpha;

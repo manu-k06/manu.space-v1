@@ -17,7 +17,7 @@ export function Portfolio() {
         <Projects paused={paused} onToggleMotion={toggleMotion} />
         <About />
         <Journey paused={paused} onToggleMotion={toggleMotion} />
-        <Contact />
+        <Contact paused={paused} onToggleMotion={toggleMotion} />
       </div>
     </>
   );
