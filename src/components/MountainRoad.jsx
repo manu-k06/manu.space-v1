@@ -96,7 +96,8 @@ export function MountainRoad({ containerRef, activeStep, paused }) {
       frame = 0;
       const elapsed = Math.min((now - previousTime) / 1000 || 1 / 60, 0.05);
       previousTime = now;
-      current += (target - current) * (1 - Math.exp(-7 * elapsed));
+      // Ease toward the reading position gently (about two seconds to cover 95%).
+      current += (target - current) * (1 - Math.exp(-1.5 * elapsed));
       if (Math.abs(target - current) < 0.0001) current = target;
       paint();
       if (current !== target) frame = requestAnimationFrame(animate);
