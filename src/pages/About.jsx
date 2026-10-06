@@ -1,36 +1,45 @@
 import React from 'react';
 
-/**
- * About Page Component.
- */
 export function About() {
   return (
-    <section className="section section--full">
-      <div className="container">
-        <div className="fade-in">
-          <span className="label">About</span>
-          <h2 style={{ margin: 'var(--space-sm) 0 var(--space-md)' }}>
-            Intentionally quiet. <br />
-            Relentlessly focused.
+    <section
+      id="about"
+      tabIndex={-1}
+      className="section portfolio-section"
+      aria-labelledby="about-title"
+    >
+      <div className="container about-layout">
+        <header className="section-heading">
+          <span className="label">02 / A little about me</span>
+          <h2 id="about-title">
+            Curious by nature.
+            <br />A builder by choice.
           </h2>
-          <p style={{ marginBottom: 'var(--space-sm)' }}>
-            I'm a Computer Science student at FISAT, Kerala, somewhere between my
-            first year and a very ambitious future. I build things — city
-            simulators, AI curated wallpaper websites, portfolio sites with too
-            much personality — because I believe the best way to learn is to ship.
-          </p>
-          <p style={{ marginBottom: 'var(--space-sm)' }}>
-            Space has always been my obsession, not just as a subject but as a
-            lens: the vastness of it, the silence, the idea that light from
-            dying stars still reaches us. That same sense of scale is what I
-            bring to my work.
+        </header>
+        <div className="about-copy">
+          <p>
+            I’m a Computer Science student at FISAT, Kerala. I build web apps,
+            games, and AI tools because the best way I know to learn is to ship
+            something, break it, and make it better.
           </p>
           <p>
-            I'm chasing two horizons in parallel — a seat at an IIT through GATE,
-            and a role at a company where the problems are as big as I want them
-            to be. For now, I write code, break things on purpose, and refuse to
-            wait for the right moment. The right moment is being built.
+            Space is a constant source of curiosity—the scale, the silence, and
+            how much there is left to discover. That curiosity follows me into
+            code.
           </p>
+          <h3>What I work with</h3>
+          <ul className="skills-list" aria-label="Technologies">
+            {[
+              'JavaScript',
+              'React',
+              'Python / FastAPI',
+              'Supabase',
+              'HTML Canvas',
+              'Git & Linux',
+            ].map((skill) => (
+              <li key={skill}>{skill}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

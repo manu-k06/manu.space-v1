@@ -2,32 +2,45 @@ import React from 'react';
 import { projects } from '../data/projectsData';
 import { ProjectCard } from '../components/ProjectCard';
 
-/**
- * Projects Page Component.
- * 
- * Demonstrates passing props with spread attributes ({...project})
- * and rendering lists with unique keys.
- */
-export function Projects() {
+export function Projects({ paused, onToggleMotion }) {
   return (
-    <section className="section">
+    <section
+      id="projects"
+      tabIndex={-1}
+      className="section portfolio-section"
+      aria-labelledby="projects-title"
+    >
       <div className="container">
-
-        <div className="fade-in">
-          <span className="label">Selected Work</span>
-          <h2 style={{ margin: 'var(--space-sm) 0 var(--space-md)' }}>
-            Frames of work.
-          </h2>
-          <p style={{ marginBottom: 'var(--space-xl)' }}>
-            A collection of projects built with intention.
+        <header className="section-heading">
+          <div className="section-eyebrow">
+            <span className="label">01 / Selected work</span>
+            <button
+              className="sky-toggle"
+              type="button"
+              aria-pressed={paused}
+              onClick={onToggleMotion}
+            >
+              {paused ? 'Resume space animation' : 'Pause space animation'}
+            </button>
+          </div>
+          <h2 id="projects-title">Ideas, made real.</h2>
+          <p>
+            Web apps, games, and AI tools. A few things I’ve built and shipped.
           </p>
-        </div>
-
-        <div className="projects-grid fade-in">
-          {projects.map((project) => (
+        </header>
+        <div className="projects-grid">
+          {projects.slice(0, 3).map((project) => (
             <ProjectCard key={project.id} {...project} />
           ))}
         </div>
+        <details className="more-projects">
+          <summary>Explore two more projects</summary>
+          <div className="projects-grid">
+            {projects.slice(3).map((project) => (
+              <ProjectCard key={project.id} {...project} />
+            ))}
+          </div>
+        </details>
       </div>
     </section>
   );

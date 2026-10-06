@@ -36,23 +36,29 @@ export function MilestoneCard({
       </div>
 
       {/* Title */}
-      <h2 id={`milestone-title-${milestone.id}`} className="card-title">
+      <h3 id={`milestone-title-${milestone.id}`} className="card-title">
         {milestone.title}
-      </h2>
+      </h3>
 
       {/* Narrative Description */}
-      <p className="card-desc">{milestone.description}</p>
+      <p className="card-desc">{milestone.summary}</p>
+      <details className="milestone-details">
+        <summary aria-label={`Read more about ${milestone.title}`}>
+          Read the story
+        </summary>
+        <p className="card-desc">{milestone.description}</p>
 
-      {/* Key Focus Tags */}
-      {milestone.tags && milestone.tags.length > 0 && (
-        <div className="card-tags">
-          {milestone.tags.map((tag) => (
-            <span key={tag} className="tag-pill">
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
+        {/* Key Focus Tags */}
+        {milestone.tags && milestone.tags.length > 0 && (
+          <div className="card-tags">
+            {milestone.tags.map((tag) => (
+              <span key={tag} className="tag-pill">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </details>
 
       {/* Shipped Projects Links */}
       {milestone.projects && milestone.projects.length > 0 && (

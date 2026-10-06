@@ -1,58 +1,59 @@
-import React, { useEffect, useRef } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, useLocation, useNavigationType } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 
-/**
- * Main Layout Shell.
- *
- * Demonstrates React Router's <Outlet /> concept:
- * The Navbar stays mounted across all pages, while the child
- * route content renders inside <Outlet />.
- */
 export function Layout() {
   const location = useLocation();
-  const isHome = location.pathname === '/';
-  const previousPath = useRef(location.pathname);
+  const navigationType = useNavigationType();
 
-  // Automatically reset scroll to top on route navigation to prevent top-offset collisions
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    const titles = {
-      '/': 'Manu — Developer & space enthusiast',
-      '/journey': 'Journey — Manu',
-      '/projects': 'Projects — Manu',
-      '/about': 'About — Manu',
-      '/contact': 'Contact — Manu',
-    };
-    document.title = titles[location.pathname] || 'manu.space';
-    if (previousPath.current !== location.pathname) {
-      document.getElementById('main-content')?.focus({ preventScroll: true });
-      previousPath.current = location.pathname;
+    if (location.pathname !== '/') return;
+    document.title = 'Manu — Developer & space enthusiast';
+    let id;
+    try {
+      id = decodeURIComponent(location.hash.slice(1));
+    } catch {
+      return;
     }
-  }, [location.pathname]);
+    let cancelled = false;
+    let frame;
+    // Font metrics can change the height of every section above a deep link.
+    // Wait for them before positioning; cancel if navigation changes meanwhile.
+    const position = () => {
+      if (cancelled) return;
+      frame = requestAnimationFrame(() => {
+        if (cancelled) return;
+        const target = document.getElementById(id || 'home');
+        if (!target) return;
+        const smooth =
+          navigationType === 'PUSH' &&
+          !matchMedia('(prefers-reduced-motion: reduce)').matches;
+        target.scrollIntoView({
+          behavior: smooth ? 'smooth' : 'instant',
+          block: 'start',
+        });
+        if (id) target.focus({ preventScroll: true });
+      });
+    };
+    if (id) document.fonts.ready.then(position);
+    else position();
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
+  }, [location.key, location.pathname, location.hash, navigationType]);
 
   return (
     <>
-      {/* Navigation is persistent across all routes */}
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
       <Navbar />
-
-      {/* Main page content swaps out here */}
-      <main
-        id="main-content"
-        tabIndex={-1}
-        key={location.pathname}
-        className="page-enter"
-        style={{ flex: 1 }}
-      >
+      <main id="main-content" tabIndex={-1} style={{ flex: 1 }}>
         <Outlet />
       </main>
-
-      {/* The home hero is full-viewport, footer is shown on all other pages */}
-      {!isHome && <Footer />}
+      <Footer />
     </>
   );
 }

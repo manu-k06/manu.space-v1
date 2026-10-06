@@ -107,6 +107,15 @@ export function CelestialSky({ paused = false }) {
       const mobile = width < 700;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, width, height);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(
+        0,
+        Math.max(0, rect.top),
+        width,
+        Math.max(0, Math.min(height, rect.bottom) - Math.max(0, rect.top))
+      );
+      ctx.clip();
       // A viewport-sized canvas avoids a multi-thousand-pixel animated surface.
       for (const star of stars) {
         const y = star.y * sectionHeight + rect.top;
@@ -175,6 +184,7 @@ export function CelestialSky({ paused = false }) {
       shade.addColorStop(1, 'rgba(14,14,14,0)');
       ctx.fillStyle = shade;
       ctx.fillRect(0, 0, width, height);
+      ctx.restore();
     };
     const canAnimate = () =>
       inView && !document.hidden && !pauseRef.current && !reduced.matches;

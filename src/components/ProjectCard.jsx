@@ -1,9 +1,10 @@
 import React from 'react';
 import { useRepoStats } from '../hooks/useRepoStats';
+import { ArrowIcon } from './ArrowIcon';
 
 /**
  * ProjectCard Component.
- * 
+ *
  * Demonstrates:
  * 1. React Props: receives curated content from projectsData.
  * 2. Asynchronous Component Hydration: uses `useRepoStats` to augment
@@ -24,14 +25,20 @@ export function ProjectCard({ title, meta, description, link, repo }) {
         <span className="project-meta">{meta}</span>
         {stats && (stats.stars > 0 || stats.language) && (
           <span className="project-badge">
-            {stats.language && <span className="project-lang">{stats.language}</span>}
-            {stats.stars > 0 && <span className="project-stars">★ {stats.stars}</span>}
+            {stats.language && (
+              <span className="project-lang">{stats.language}</span>
+            )}
+            {stats.stars > 0 && (
+              <span className="project-stars">★ {stats.stars}</span>
+            )}
           </span>
         )}
       </div>
       <div className="project-title-row">
         <h3 className="project-title">{title}</h3>
-        <span className="project-arrow" aria-hidden="true">↗</span>
+        <span className="project-arrow">
+          <ArrowIcon />
+        </span>
       </div>
       <p className="timeline-description">{description}</p>
     </a>

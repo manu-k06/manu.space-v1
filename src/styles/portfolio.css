@@ -1,0 +1,256 @@
+/* A continuous page with native scrolling and stable section destinations. */
+#home,
+.portfolio-section {
+  scroll-margin-top: calc(var(--nav-height) + 16px);
+}
+#home {
+  scroll-margin-top: 0;
+}
+#home:focus,
+.portfolio-section:focus,
+#main-content:focus {
+  outline: none;
+}
+.portfolio-space {
+  position: relative;
+  isolation: isolate;
+}
+.portfolio-section {
+  position: relative;
+  padding: clamp(4rem, 8vw, 7rem) 0;
+}
+.portfolio-section + .portfolio-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: max(1rem, calc((100% - 1136px) / 2));
+  right: max(1rem, calc((100% - 1136px) / 2));
+  height: 1px;
+  background: #ffffff12;
+}
+.section-heading {
+  margin-bottom: 2rem;
+}
+.section-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.section-heading h2 {
+  font-size: clamp(2.1rem, 4.4vw, 3.5rem);
+  letter-spacing: -0.025em;
+  margin: 1rem 0;
+}
+.section-heading p {
+  color: var(--text-secondary);
+  max-width: 45ch;
+}
+.portfolio-section .projects-grid {
+  margin-top: 2rem;
+}
+.portfolio-section .project-card {
+  border-radius: 6px;
+  background: #171819f2;
+  border-color: #ffffff18;
+}
+.portfolio-section .project-card:focus-visible {
+  border-color: var(--accent);
+}
+.more-projects {
+  margin-top: 1.75rem;
+}
+.more-projects > summary,
+.milestone-details > summary {
+  width: fit-content;
+  min-height: 44px;
+  padding: 0.6rem 0;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.85rem;
+  list-style: revert;
+}
+.more-projects > summary:hover,
+.milestone-details > summary:hover {
+  color: #fff;
+}
+.about-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: clamp(2rem, 6vw, 5rem);
+}
+.about-copy p + p {
+  margin-top: 1rem;
+}
+.about-copy h3 {
+  font: 0.75rem var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 2rem 0 1rem;
+  color: var(--text-dim);
+}
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.skills-list li {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid #ffffff20;
+  border-radius: 3px;
+  background: #171819d9;
+}
+.journey-section {
+  isolation: auto;
+  overflow: visible;
+}
+.journey-header {
+  padding-top: 0;
+}
+.journey-header h2 {
+  font-size: clamp(2.1rem, 4.4vw, 3.5rem);
+  letter-spacing: -0.025em;
+  margin: 1rem 0;
+}
+.journey-header p {
+  max-width: 44ch;
+}
+.milestones-flow {
+  gap: 2rem;
+  padding-top: 1rem;
+}
+.mountain-card {
+  padding: clamp(1.25rem, 2vw, 1.65rem);
+}
+.milestone-details > summary {
+  font-size: 0.75rem;
+}
+.milestone-details[open] > summary {
+  margin-bottom: 0.5rem;
+}
+.milestone-details .card-desc {
+  font-size: 0.9rem;
+}
+.card-project-links {
+  margin-top: 0.5rem;
+  padding-top: 0.3rem;
+}
+.contact-section {
+  padding-bottom: clamp(5rem, 10vw, 9rem);
+}
+.contact-content {
+  max-width: 760px;
+}
+.contact-content h2 {
+  font-size: clamp(2.3rem, 5vw, 4rem);
+  letter-spacing: -0.03em;
+}
+.contact-intro {
+  margin-top: 1.5rem;
+  max-width: 45ch;
+}
+.contact-wrapper {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 0.5rem 1.5rem;
+}
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.contact-link:first-child {
+  flex-basis: 100%;
+  width: fit-content;
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 4vw, 2rem);
+}
+.nav-links a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.nav-links a.active::after {
+  bottom: 3px;
+}
+.hero-content {
+  pointer-events: auto;
+}
+.hero-text {
+  width: min(430px, 100%);
+}
+.hero-intro {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  max-width: 35ch;
+  margin-top: 1.2rem;
+  color: var(--text-secondary);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+.hero-typewriter {
+  min-height: 3.2em;
+}
+@media (max-width: 768px) {
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .hero-content {
+    padding: calc(var(--nav-height) + 1rem) 1rem 2rem;
+    margin-top: 0;
+  }
+  .hero-text {
+    width: min(430px, 100%);
+  }
+  .hero-intro {
+    margin-inline: auto;
+  }
+  .hero-actions {
+    justify-content: center;
+  }
+  .hero-section {
+    min-height: max(680px, 100svh);
+    height: auto;
+  }
+  .nav-links {
+    gap: 0.85rem;
+  }
+  .nav-links a {
+    font-size: 0.7rem;
+  }
+  .site-footer .container {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-image {
+    filter: grayscale(100%) contrast(1.1) brightness(0.7);
+    opacity: 1;
+  }
+}
+/* Reserve metadata space so asynchronous repository statistics do not move anchors. */
+.portfolio-section .project-header {
+  min-height: 3rem;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-content: flex-start;
+  align-items: flex-start;
+}
+.portfolio-section .project-arrow {
+  display: inline-flex;
+}
+/* Leave enough space for the final anchor to clear the fixed navigation. */
+.contact-section {
+  min-height: calc(100svh - var(--nav-height) - 16px);
+}

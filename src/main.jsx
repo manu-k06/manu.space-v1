@@ -7,10 +7,11 @@ import { App } from './App';
 import './styles/base.css';
 import './styles/layout.css';
 import './styles/hero.css';
+import './styles/portfolio.css';
 
 /**
  * Application Entry Point.
- * 
+ *
  * Uses ReactDOM.createRoot (React 18+) to render the React tree
  * inside the #root DOM element from index.html.
  * Wraps the application in BrowserRouter for client-side routing.

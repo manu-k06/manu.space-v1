@@ -2,6 +2,8 @@ export const journeyMilestones = [
   {
     step: '01',
     id: 'detour',
+    summary:
+      'A year chasing IIT JEE led me to a different path: learning to code.',
     year: '2024',
     title: 'The Detour',
     category: 'Foundations',
@@ -12,6 +14,8 @@ export const journeyMilestones = [
   {
     step: '02',
     id: 'fisat',
+    summary:
+      'Joined FISAT to study Computer Science and started shipping my first projects.',
     year: '2025',
     title: 'Touchdown at FISAT',
     category: 'CS fundamentals',
@@ -22,6 +26,8 @@ export const journeyMilestones = [
   {
     step: '03',
     id: 'first-orbit',
+    summary:
+      'My first hackathon, a city simulator, and an AI-powered wallpaper project.',
     year: 'EARLY 2026',
     title: 'First Orbit: Hackathons',
     category: 'Hackfit 4.0 & Hack Horizon',
@@ -36,6 +42,8 @@ export const journeyMilestones = [
   {
     step: '04',
     id: 'systems-ai',
+    summary:
+      'From a Canvas game to full-stack apps and retrieval-augmented AI.',
     year: 'MID 2026',
     title: 'Engines & Full-Stack AI',
     category: 'Full-stack & AI',
@@ -51,6 +59,8 @@ export const journeyMilestones = [
   {
     step: '05',
     id: 'current-orbit',
+    summary:
+      'Studying CS, preparing for GATE, and looking for opportunities to build.',
     year: 'NOW & HORIZON',
     title: 'Current Orbit',
     category: 'Learning & building',

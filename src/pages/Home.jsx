@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowIcon } from '../components/ArrowIcon';
 import heroImg from '../assets/hero.png';
 import { useParallax } from '../hooks/useParallax';
 import { useTypewriter } from '../hooks/useTypewriter';
 
 /**
  * Home Page (Cinematic Hero Section).
- * 
+ *
  * Features:
  * 1. Film exposure effect: smooth grayscale/contrast/blur reveal on mount.
  * 2. Mouse parallax: subtle 3D depth tracking cursor movement.
@@ -31,7 +33,12 @@ export function Home() {
   }, []);
 
   return (
-    <section className="hero-section">
+    <section
+      id="home"
+      tabIndex={-1}
+      className="hero-section"
+      aria-labelledby="hero-title"
+    >
       {/* Outer Parallax Container with entrance fade */}
       <div className="hero-parallax-container fade-in">
         {/* Parallax wrapper: transform is purely driven by useParallax, no keyframe override */}
@@ -50,7 +57,9 @@ export function Home() {
       {/* Hero Content Overlay */}
       <div className="hero-content">
         <div className="hero-text fade-in">
-          <h1 className="hero-name">Manu</h1>
+          <h1 id="hero-title" className="hero-name">
+            Manu
+          </h1>
           <span
             className={`hero-typewriter ${isTyping ? 'typing-active' : ''} ${
               isDone ? 'typing-done' : ''
@@ -58,6 +67,20 @@ export function Home() {
           >
             {displayText}
           </span>
+          <p className="hero-intro">
+            Computer Science student building web apps, games, and AI tools.
+          </p>
+          <div className="hero-actions">
+            <Link
+              className="journey-action journey-action--primary"
+              to="/#projects"
+            >
+              Explore my work <ArrowIcon />
+            </Link>
+            <Link className="journey-action" to="/#contact">
+              Get in touch <ArrowIcon />
+            </Link>
+          </div>
         </div>
       </div>
     </section>

@@ -21,16 +21,23 @@ export function useParallax(maxOffset = 20) {
       return;
     }
     let rafId = null;
+    let visible = true;
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (!visible) cancelAnimationFrame(rafId);
+    });
+    const section = targetRef.current?.closest('section');
+    if (section) observer.observe(section);
 
     const handleMouseMove = (e) => {
-      if (!targetRef.current) return;
+      if (!visible || document.hidden || !targetRef.current) return;
 
       if (rafId) {
         cancelAnimationFrame(rafId);
       }
 
       rafId = requestAnimationFrame(() => {
-        if (!targetRef.current) return;
+        if (!visible || document.hidden || !targetRef.current) return;
 
         // Calculate mouse position relative to center of screen (-1 to 1)
         const xPos = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -47,6 +54,7 @@ export function useParallax(maxOffset = 20) {
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     return () => {
+      observer.disconnect();
       window.removeEventListener('mousemove', handleMouseMove);
       if (rafId) cancelAnimationFrame(rafId);
     };
