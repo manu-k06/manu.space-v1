@@ -8,6 +8,7 @@ import './styles/base.css';
 import './styles/layout.css';
 import './styles/hero.css';
 import './styles/portfolio.css';
+import './styles/celestial.css';
 
 /**
  * Application Entry Point.
