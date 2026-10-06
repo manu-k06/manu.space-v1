@@ -1,5 +1,4 @@
 import React from 'react';
-import { SpaceStation } from '../components/SpaceStation';
 
 const contactLinks = [
   {
@@ -22,7 +21,7 @@ const contactLinks = [
 /**
  * Contact Page Component.
  */
-export function Contact({ paused, onToggleMotion }) {
+export function Contact() {
   return (
     <section
       id="contact"
@@ -30,7 +29,7 @@ export function Contact({ paused, onToggleMotion }) {
       className="section portfolio-section contact-section"
       aria-labelledby="contact-title"
     >
-      <div className="container contact-layout">
+      <div className="container">
         <div className="contact-content">
           <span className="label">04 / The next chapter</span>
           <h2 id="contact-title" style={{ margin: 'var(--space-sm) 0 0' }}>
@@ -55,16 +54,7 @@ export function Contact({ paused, onToggleMotion }) {
               </a>
             ))}
           </div>
-          <button
-            type="button"
-            className="sky-toggle contact-motion"
-            aria-pressed={paused}
-            onClick={onToggleMotion}
-          >
-            {paused ? 'Resume sky motion' : 'Pause sky motion'}
-          </button>
         </div>
-        <SpaceStation paused={paused} />
       </div>
     </section>
   );
