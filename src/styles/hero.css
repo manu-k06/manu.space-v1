@@ -122,6 +122,13 @@
   .hero-text {
     max-width: 430px;
     margin-inline: auto;
+    text-align: center;
+  }
+  .hero-intro {
+    margin-inline: auto;
+  }
+  .hero-actions {
+    justify-content: center;
   }
   .hero-name {
     font-size: 3rem;
