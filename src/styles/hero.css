@@ -1,10 +1,10 @@
-/* Keep the full-width portrait centered; reserve the right edge for the copy. */
+/* Keep the full-width portrait centered; balance the copy beside the face. */
 .hero-section {
   position: relative;
   width: 100%;
   min-height: max(680px, 100svh);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   overflow: hidden;
   background: var(--bg-deep);
 }
@@ -32,9 +32,9 @@
 }
 .hero-content {
   position: relative;
-  width: 29%;
-  margin-left: 68%;
-  padding-block: calc(var(--nav-height) + 2rem) clamp(64px, 10svh, 120px);
+  width: 30%;
+  margin-left: 65%;
+  padding-block: calc(var(--nav-height) + 1rem) 2rem;
   animation: heroReveal 0.8s ease-out both;
 }
 .hero-text {
