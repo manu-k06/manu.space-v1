@@ -151,8 +151,8 @@
   max-width: 45ch;
 }
 .contact-wrapper {
-  display: flex;
-  flex-flow: row wrap;
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
   gap: 0.5rem 1.5rem;
 }
 .contact-link {
@@ -165,7 +165,9 @@
   overflow-wrap: anywhere;
 }
 .contact-link:first-child {
-  flex-basis: 100%;
+  grid-column: 1 / -1;
+  justify-self: start;
+  min-width: 0;
   width: fit-content;
   font-family: var(--font-serif);
   font-size: clamp(1.25rem, 4vw, 2rem);
