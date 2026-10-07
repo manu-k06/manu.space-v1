@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowIcon } from '../components/ArrowIcon';
 import heroImg from '../assets/hero.png';
+import { useParallax } from '../hooks/useParallax';
 import { useTypewriter } from '../hooks/useTypewriter';
 
-// A quiet entrance keeps the portrait still and the introduction readable.
+// Preserve the original full-width portrait; position the copy in its open space.
 export function Home() {
+  const [isExposed, setIsExposed] = useState(false);
+  const parallaxRef = useParallax(22);
   const { displayText, isTyping, isDone } = useTypewriter(
     'A developer & space enthusiast.',
     65,
     600
   );
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsExposed(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <section
@@ -19,11 +27,21 @@ export function Home() {
       className="hero-section"
       aria-labelledby="hero-title"
     >
-      <div className="hero-portrait">
-        <img src={heroImg} alt="Portrait of Manu" className="hero-image" />
+      {/* Outer Parallax Container with entrance fade */}
+      <div className="hero-parallax-container fade-in">
+        {/* Parallax wrapper: transform is purely driven by useParallax, no keyframe override */}
+        <div ref={parallaxRef} className="hero-parallax-wrapper">
+          <img
+            src={heroImg}
+            alt="Portrait of Manu"
+            className={`hero-image ${isExposed ? 'exposed' : ''}`}
+          />
+        </div>
       </div>
 
-      {/* Introduction beside the portrait on desktop, below it on mobile. */}
+      {/* Cinematic Vignette */}
+      <div className="hero-vignette" />
+
       <div className="hero-content">
         <div className="hero-text">
           <h1 id="hero-title" className="hero-name">
