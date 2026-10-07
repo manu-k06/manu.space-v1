@@ -1,36 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowIcon } from '../components/ArrowIcon';
 import heroImg from '../assets/hero.png';
-import { useParallax } from '../hooks/useParallax';
 import { useTypewriter } from '../hooks/useTypewriter';
 
-/**
- * Home Page (Cinematic Hero Section).
- *
- * Features:
- * 1. Film exposure effect: smooth grayscale/contrast/blur reveal on mount.
- * 2. Mouse parallax: subtle 3D depth tracking cursor movement.
- * 3. Typewriter effect: terminal-style typewriter with blinking cursor.
- */
+// A quiet entrance keeps the portrait still and the introduction readable.
 export function Home() {
-  const [isExposed, setIsExposed] = useState(false);
-  // Parallax with 22px max shift for noticeable, elegant depth
-  const parallaxRef = useParallax(22);
   const { displayText, isTyping, isDone } = useTypewriter(
     'A developer & space enthusiast.',
-    65, // typing speed in ms
-    600 // start delay in ms
+    65,
+    600
   );
-
-  // Film exposure effect: transitions image filter & opacity after a brief mount delay
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsExposed(true);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <section
@@ -39,24 +19,13 @@ export function Home() {
       className="hero-section"
       aria-labelledby="hero-title"
     >
-      {/* Outer Parallax Container with entrance fade */}
-      <div className="hero-parallax-container fade-in">
-        {/* Parallax wrapper: transform is purely driven by useParallax, no keyframe override */}
-        <div ref={parallaxRef} className="hero-parallax-wrapper">
-          <img
-            src={heroImg}
-            alt="Portrait of Manu"
-            className={`hero-image ${isExposed ? 'exposed' : ''}`}
-          />
-        </div>
+      <div className="hero-portrait">
+        <img src={heroImg} alt="Portrait of Manu" className="hero-image" />
       </div>
 
-      {/* Cinematic Vignette */}
-      <div className="hero-vignette" />
-
-      {/* Hero Content Overlay */}
+      {/* Introduction beside the portrait on desktop, below it on mobile. */}
       <div className="hero-content">
-        <div className="hero-text fade-in">
+        <div className="hero-text">
           <h1 id="hero-title" className="hero-name">
             Manu
           </h1>
@@ -65,7 +34,10 @@ export function Home() {
               isDone ? 'typing-done' : ''
             }`}
           >
-            {displayText}
+            <span className="hero-tagline-readable">
+              A developer &amp; space enthusiast.
+            </span>
+            <span aria-hidden="true">{displayText}</span>
           </span>
           <p className="hero-intro">
             Computer Science student building web apps, games, and AI tools.
