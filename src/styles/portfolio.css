@@ -137,7 +137,7 @@
   padding-top: 0.3rem;
 }
 .contact-section {
-  padding-bottom: clamp(5rem, 10vw, 9rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
 }
 .contact-content {
   max-width: 760px;
@@ -207,9 +207,9 @@
 .portfolio-section .project-arrow {
   display: inline-flex;
 }
-/* Leave enough space for the final anchor to clear the fixed navigation. */
+/* Let Contact size to its content instead of reserving a full empty viewport. */
 .contact-section {
-  min-height: calc(100svh - var(--nav-height) - 16px);
+  min-height: 0;
 }
 
 /* Give each galaxy an actual place in the composition, clear of cards and copy. */

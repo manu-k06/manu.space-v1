@@ -1,4 +1,5 @@
 import React from 'react';
+import { SpaceStation } from '../components/SpaceStation';
 
 const contactLinks = [
   {
@@ -29,7 +30,7 @@ export function Contact() {
       className="section portfolio-section contact-section"
       aria-labelledby="contact-title"
     >
-      <div className="container">
+      <div className="container contact-layout">
         <div className="contact-content">
           <h2 id="contact-title" style={{ margin: 'var(--space-sm) 0 0' }}>
             Let’s build something.
@@ -49,6 +50,7 @@ export function Contact() {
             ))}
           </div>
         </div>
+        <SpaceStation />
       </div>
     </section>
   );

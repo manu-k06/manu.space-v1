@@ -1,0 +1,34 @@
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+}
+.station-scene {
+  width: 100%;
+  height: clamp(280px, 29vw, 390px);
+  min-width: 0;
+  pointer-events: none;
+}
+.station-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.station-unavailable {
+  display: none;
+}
+.contact-layout:has(.station-unavailable) {
+  grid-template-columns: 1fr;
+}
+@media (max-width: 900px) {
+  .contact-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+  .station-scene {
+    height: clamp(230px, 65vw, 340px);
+    max-width: 540px;
+    justify-self: center;
+  }
+}
