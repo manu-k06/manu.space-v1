@@ -31,15 +31,9 @@ export function Contact() {
     >
       <div className="container">
         <div className="contact-content">
-          <span className="label">04 / The next chapter</span>
           <h2 id="contact-title" style={{ margin: 'var(--space-sm) 0 0' }}>
             Let’s build something.
           </h2>
-          <p className="contact-intro">
-            Interested in working together? I’m looking for software engineering
-            internships and people to build with.
-          </p>
-
           <div className="contact-wrapper">
             {contactLinks.map((link) => (
               <a

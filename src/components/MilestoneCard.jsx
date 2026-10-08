@@ -27,12 +27,9 @@ export function MilestoneCard({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      {/* Header Row: Year Badge + Category */}
+      {/* Year */}
       <div className="card-header-meta">
-        <span className="card-step-badge">
-          {milestone.step} • {milestone.year}
-        </span>
-        <span className="card-category">{milestone.category}</span>
+        <span className="card-step-badge">{milestone.year}</span>
       </div>
 
       {/* Title */}
@@ -47,37 +44,26 @@ export function MilestoneCard({
           Read the story
         </summary>
         <p className="card-desc">{milestone.description}</p>
+
+        {/* Shipped Projects Links */}
+        {milestone.projects && milestone.projects.length > 0 && (
+          <div className="card-project-links">
+            {milestone.projects.map((proj) => (
+              <a
+                key={proj.name}
+                href={proj.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="project-link-chip"
+                title={`View ${proj.name}`}
+              >
+                <span>{proj.name}</span>
+                <ArrowIcon />
+              </a>
+            ))}
+          </div>
+        )}
       </details>
-
-      {/* Key Focus Tags */}
-      {milestone.tags && milestone.tags.length > 0 && (
-        <div className="card-tags">
-          {milestone.tags.map((tag) => (
-            <span key={tag} className="tag-pill">
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Shipped Projects Links */}
-      {milestone.projects && milestone.projects.length > 0 && (
-        <div className="card-project-links">
-          {milestone.projects.map((proj) => (
-            <a
-              key={proj.name}
-              href={proj.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="project-link-chip"
-              title={`View ${proj.name}`}
-            >
-              <span>{proj.name}</span>
-              <ArrowIcon />
-            </a>
-          ))}
-        </div>
-      )}
     </article>
   );
 }

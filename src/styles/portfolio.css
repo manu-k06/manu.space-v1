@@ -323,3 +323,31 @@
     border-inline-start: 0;
   }
 }
+
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1rem;
+}
+.project-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+.project-actions a:hover {
+  color: var(--text-primary);
+}
+.project-actions svg {
+  width: 14px;
+  height: 14px;
+}
+.portfolio-section .project-card:focus-within {
+  border-color: var(--accent);
+}
+.about-layout {
+  align-items: center;
+}

@@ -3,7 +3,7 @@ import { projects } from '../data/projectsData';
 import { GalaxyWindow } from '../components/GalaxyWindow';
 import { ProjectCard } from '../components/ProjectCard';
 
-export function Projects({ paused, onToggleMotion }) {
+export function Projects() {
   return (
     <section
       id="projects"
@@ -13,26 +13,11 @@ export function Projects({ paused, onToggleMotion }) {
     >
       <div className="container">
         <header className="section-heading">
-          <div className="section-eyebrow">
-            <span className="label">01 / Selected work</span>
-            <button
-              className="sky-toggle"
-              type="button"
-              aria-pressed={paused}
-              onClick={onToggleMotion}
-            >
-              {paused ? 'Resume space animation' : 'Pause space animation'}
-            </button>
-          </div>
           <div className="celestial-intro">
             <div className="celestial-intro-copy">
-              <h2 id="projects-title">Ideas, made real.</h2>
-              <p>
-                Web apps, games, and AI tools. A few things I’ve built and
-                shipped.
-              </p>
+              <h2 id="projects-title">Selected work.</h2>
             </div>
-            <GalaxyWindow galaxy="galaxy1" label="The spiral beyond" />
+            <GalaxyWindow galaxy="galaxy1" />
           </div>
         </header>
         <div className="projects-grid">
